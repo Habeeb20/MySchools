@@ -1,19 +1,19 @@
 import express from "express";
-import User from "../../models/Eschools/user.js";
+import User from "../models/Eschools/user.js";
 import jwt from "jsonwebtoken"
-
-import { roleBasedAccess, Protect, verifyToken } from "../../middleware/protect.js";
+import { verifyToken } from "../middleware/protect.js";
+import { CloudinaryStorage } from "multer-storage-cloudinary";
 import cloudinary from "cloudinary"
 import mongoose from "mongoose";
-import Store from "../../models/Eschools/store/storeSchema.js";
+import Exam from "../models/Eschools/exam/examSchema.js";
 
 
-const storerouter = express.Router()
+const examrouter = express.Router()
 
-storerouter.get("/dashboard", verifyToken, async(req, res) => {
+examrouter.get("/dashboard", verifyToken, async(req, res) => {
     const userId = req.user.id;
 
-    const user = await User.findById(userId)
+    const user = await Exam.findById(userId)
     if(!user){
         return res.status(404).json({message: "not found"})
 
@@ -23,29 +23,29 @@ storerouter.get("/dashboard", verifyToken, async(req, res) => {
 })
 
 
-//post store name
-storerouter.post("/poststoredata", verifyToken, async(req, res) => {
+///post data
+examrouter.post("/postexamdata", verifyToken, async(req, res) => {
     try {
         const userId = req.user.id; 
-        const { storeName } = req.body;
+        const { examBody } = req.body;
         const user = await User.findOne({ _id: userId, });
         if (!user) {
           return res.status(404).json({ message: "User account not found or invalid role" });
         }
 
-        const existingStore = await Store.findOne({ userId });
-        if (existingStore) {
+        const existingExam = await Exam.findOne({ userId });
+        if (existingExam) {
             console.log( "User has already registered a school")
           return res.status(400).json({ message: "User has already registered a school" });
         }
   
-        const store = new Store({
+        const exam = new Exam({
             userId,
-            storeName,
+            examBody,
           });
 
-          await store.save();
-          return res.status(200).json(store)
+          await exam.save();
+          return res.status(200).json(exam)
     
       
   
@@ -55,18 +55,19 @@ storerouter.post("/poststoredata", verifyToken, async(req, res) => {
     }
 })
 
-///get store data
-storerouter.get("/getstoredata", verifyToken, async(req, res) => {
+
+//get exam data
+examrouter.get("/getexamdata", verifyToken, async(req, res) => {
     try {
        
         console.log("User ID:", req.user?.id);
 
-        const store = await Store.findOne({ userId: req.user.id });
-        if (!store) {
+        const exam = await Exam.findOne({ userId: req.user.id });
+        if (!exam) {
             console.log("Store not found for user:", req.user.id);
             return res.status(404).json({ message: "Store not found" });
         }
-        return res.status(200).json( store );
+        return res.status(200).json( exam );
     } catch (error) {
         console.error(error);
         return res.status(500).json({ message: "An error occurred" });
@@ -74,11 +75,11 @@ storerouter.get("/getstoredata", verifyToken, async(req, res) => {
 })
 
 
-//get all stores
-storerouter.get("/getallstore", async(req, res) => {
+//get all exam bodies
+examrouter.get("/getallexam", async(req, res) => {
     try {
-        const store = await Store.find({})
-        return res.status(200).json(store)
+        const exam = await Exam.find({})
+        return res.status(200).json(exam)
     } catch (error) {
         console.error(error);
         return res.status(500).json({ message: "An error occurred" });
@@ -86,10 +87,10 @@ storerouter.get("/getallstore", async(req, res) => {
 })
 
 
-//edit store details
 
+///edit exam details
 
-storerouter.put("/:id", verifyToken, async (req, res) => {
+examrouter.put("/:id", verifyToken, async (req, res) => {
     const { id } = req.params;
 
     try {
@@ -117,10 +118,10 @@ storerouter.put("/:id", verifyToken, async (req, res) => {
         }
 
         // Find the store
-        const store = await Store.findById(id);
+        const store = await Exam.findById(id);
         if (!store) {
             console.log("Store not found");
-            return res.status(404).json({ message: "Store not found" });
+            return res.status(404).json({ message: "exam body not found not found" });
         }
 
         // Ensure user owns the store
@@ -168,7 +169,7 @@ storerouter.put("/:id", verifyToken, async (req, res) => {
         console.log("Final Update Payload:", updates);
 
         // Ensure that only specified fields are updated
-        const updatedStore = await Store.findByIdAndUpdate(
+        const updatedStore = await Exam.findByIdAndUpdate(
             id,
             { $set: updates }, // Only update provided fields
             { new: true, runValidators: true }
@@ -188,27 +189,31 @@ storerouter.put("/:id", verifyToken, async (req, res) => {
     }
 });
 
-
-storerouter.get("/:slug/shares", async (req, res) => {
+//get share
+examrouter.get("/:slug/shares", async (req, res) => {
     try {
         const { slug } = req.params;
-        const store = await Store.findOne({ slug }); 
+        const exam = await Exam.findOne({ slug }); 
 
-        if (!store) {
+        if (!exam) {
             return res.status(404).json({ message: "Store not found" });
         }
-        res.status(200).json({ shareCount: store.shares });
+        res.status(200).json({ shareCount: exam.shares });
     } catch (error) {
         console.error(error);
         res.status(500).json({ message: "Server error" });
     }
 });
 
+
+
+
+
 // Increment share count
-storerouter.post("/:slug/shares", async (req, res) => {
+examrouter.post("/:slug/shares", async (req, res) => {
     try {
         const { slug } = req.params;
-        const store = await Store.findOneAndUpdate(
+        const store = await Exam.findOneAndUpdate(
             { slug }, 
             { $inc: { shares: 1 } },
             { new: true }
@@ -227,16 +232,16 @@ storerouter.post("/:slug/shares", async (req, res) => {
 
 
 //increment click
-storerouter.post("/:slug/click", async(req, res) => {
+examrouter.post("/:slug/click", async(req, res) => {
     try {
         const {slug} = req.params;
-        const store = await Store.findOneAndUpdate(
+        const store = await Exam.findOneAndUpdate(
             {slug},
             { $inc: { clicks: 1 } },
             { new: true }
         )
         if(!store) {
-            return res.status(400).json({message:"school not found"})
+            return res.status(400).json({message:"exam  not found"})
         }
         res.status(200).json({message:"click count updated"})
     } catch (error) {
@@ -247,11 +252,11 @@ storerouter.post("/:slug/click", async(req, res) => {
 
 
 ///get the click count for a specific sstore
-storerouter.get("/get-clicks/:slug", async(req, res) => {
+examrouter.get("/get-clicks/:slug", async(req, res) => {
     try {
         const {slug} = req.params;
 
-        const store = await Store.findOne(slug)
+        const store = await Exam.findOne(slug)
 
         if (!store) {
             return res.status(404).json({ message: "exam not found" });
@@ -265,9 +270,9 @@ storerouter.get("/get-clicks/:slug", async(req, res) => {
 
 //get every click
 
-storerouter.get("/get-clicks", async (req, res) => {
+examrouter.get("/get-clicks", async (req, res) => {
     try {
-      const store = await Store.find({}, "exam clicks"); // Fetch school name and clicks only
+      const store = await Exam.find({}, "exam clicks"); 
   
       res.status(200).json(store);
     } catch (error) {
@@ -277,20 +282,20 @@ storerouter.get("/get-clicks", async (req, res) => {
   });
 
   //get a store slug
-storerouter.get("/aStore/:slug", async (req, res) => {
+examrouter.get("/aStore/:slug", async (req, res) => {
   
     try {
       const { slug } = req.params.slug;
       console.log(req.params);
   
      
-      const store = await Store.findOne(slug);
+      const store = await Exam.findOne(slug);
   
       if (!store) {
-        console.log("store not found");
+        console.log("exam not found");
         return res
           .status(404)
-          .json({ success: false, message: "store not found" });
+          .json({ success: false, message: "exam not found" });
       }
   
       res.status(200).json({
@@ -304,7 +309,7 @@ storerouter.get("/aStore/:slug", async (req, res) => {
   });
 
 //post comment
-storerouter.post("/:slug/comments", async (req, res) => {
+examrouter.post("/:slug/comments", async (req, res) => {
     const { name, text } = req.body;
 
     // Validate input
@@ -313,9 +318,9 @@ storerouter.post("/:slug/comments", async (req, res) => {
     }
 
     try {
-        const store = await Store.findOne({ slug: req.params.slug }); // Fixed query
+        const store = await Exam.findOne({ slug: req.params.slug }); // Fixed query
         if (!store) {
-            return res.status(404).json({ message: "Store not found" });
+            return res.status(404).json({ message: "exam not found not found" });
         }
 
         const newComment = { name, text, createdAt: new Date() }; // Added timestamp
@@ -331,7 +336,7 @@ storerouter.post("/:slug/comments", async (req, res) => {
 
 
 //count stores
-storerouter.get("/countstore", async (req, res) => {
+examrouter.get("/countstore", async (req, res) => {
     try {
         let { locations } = req.query;
 
@@ -344,7 +349,7 @@ storerouter.get("/countstore", async (req, res) => {
                 return res.status(400).json({ message: "Locations must be an array of strings" });
             }
 
-            const counts = await Store.aggregate([
+            const counts = await Exam.aggregate([
                 { $match: { location: { $in: locations.map((loc) => new RegExp(loc, "i")) } } },
                 { $group: { _id: "$location", count: { $sum: 1 } } }
             ]);
@@ -353,8 +358,8 @@ storerouter.get("/countstore", async (req, res) => {
         }
 
         // If no location is provided, return total count
-        const totalStores = await Store.countDocuments();
-        res.json({ totalStores });
+        const totalExam = await Exam.countDocuments();
+        res.json({ totalExam });
     } catch (error) {
         console.error(error);
         res.status(500).json({ message: "Server error" });
@@ -364,7 +369,7 @@ storerouter.get("/countstore", async (req, res) => {
 
 
 //location count
-storerouter.get('/location/counts', async (req, res) => {
+examrouter.get('/location/counts', async (req, res) => {
     try {
   
       const states = [
@@ -378,7 +383,7 @@ storerouter.get('/location/counts', async (req, res) => {
       const stateCounts = {};
   
       for (const state of states) {
-        const count = await Store.countDocuments({ state: state });
+        const count = await Exam.countDocuments({ state: state });
         stateCounts[state] = count;
       }
   
@@ -392,5 +397,4 @@ storerouter.get('/location/counts', async (req, res) => {
   });
 
 
-
-export default storerouter
+  export default examrouter

@@ -23,6 +23,8 @@ import studentRouter from "./routes/eschools/schools/student.route.js";
 import reportSchoolrouter from "./routes/eschools/schools/schoolreport.router.js";
 import financeRouter from "./routes/eschools/schools/financeRoute.js";
 import storerouter from "./routes/eschools/store.route.js";
+import examrouter from "./routes/exam.route.js";
+import trainingrouter from "./routes/training.route.js";
 dotenv.config();
 
 
@@ -65,6 +67,8 @@ app.use("/eschools/report", reportRouter)
 app.use("/eschools/request", requestRouter)
 
 app.use("/eschools/store", storerouter)
+app.use("/eschools/exam", examrouter)
+app.use("/eschools/training", trainingrouter)
 
 
 

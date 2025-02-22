@@ -5,7 +5,7 @@ import jwt from "jsonwebtoken"
 import express from "express";
 import cloudinary from "cloudinary"
 import nodemailer from "nodemailer"
-
+import axios from "axios"
 import crypto from "crypto"
 import { verifyToken } from "../../middleware/protect.js";
 
@@ -70,6 +70,19 @@ userRouter.post("/signup", async(req, res) => {
     await user.save();
     
     await sendOTPEmail(user.email, verificationToken);
+
+    const userData = {
+        name: email.split("@")[0],
+        email,
+        password,
+        confirmPassword:password,
+        role
+    }
+
+    await axios.post("https://api.edirect.ng/api/register", userData, {
+        headers: { "Content-Type": "application/json" }
+    });
+
 
     return res.status(201).json({
         message: "user registered successfully, check your email to get verify your account",

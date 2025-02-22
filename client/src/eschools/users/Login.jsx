@@ -53,8 +53,14 @@ const Login = () => {
           navigate("/storedashboard");
           break;
         case "tutorial-center":
-          navigate("/tutorial-dashboard");
+          navigate("/tutorialdashboard");
           break;
+          case "training-center":
+            navigate("/trainingdashboard");
+            break;
+            case "exam-board":
+              navigate("/examdashboard");
+              break;
         default:
           navigate("/");
       }
@@ -98,6 +104,8 @@ const Login = () => {
           <option value="school-administrator">school administrator</option>
           <option value="store-owner">store owner</option>
           <option value="tutorial-center">tutorial center</option>
+          <option value="training-center">training center</option>
+          <option value="exam-board">exam-board</option>
         </select>
 
         <input

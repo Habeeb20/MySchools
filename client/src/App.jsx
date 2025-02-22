@@ -40,6 +40,8 @@ import SchoolsHomePage from './eschools/schools/SchoolsHomePage'
 import SchoolsDetails from './eschools/schools/SchoolsDetails'
 import ChooseLogin from './eschools/schools/ChooseLogin'
 import StoreDashboard from './eschools/store/StoreDashboard'
+import StoreHomePage from './eschools/store/StoreHomePage'
+import StoreDetails from './eschools/store/StoreDetails'
 const AppLayout = ({ children }) => {
   const location = useLocation();
 
@@ -107,8 +109,11 @@ function App() {
         <Route path="/" element={<Home />} />
         <Route path="/report" element={<Report />} />
         <Route path="/request" element={<RequestForm />} />
+       
 
         <Route path="/storedashboard" element={<StoreDashboard />} />
+         <Route path="/storehomepage" element={<StoreHomePage />} />
+         <Route path="/store/:slug"  element={<StoreDetails />} />
       </Routes>
 
 
