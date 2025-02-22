@@ -15,7 +15,7 @@ import {
 } from "chart.js";
 import { LineChart, PieChart,  BarChart,  XAxis, YAxis, ResponsiveContainer, Line } from "recharts";
 import axios from "axios";
-import TrendsChart from "../schools/TrendsCharts";
+
 import { useEffect } from "react";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
@@ -30,6 +30,7 @@ ChartJS.register(
 
 const sidebarItems = [
   { name: "Dashboard", icon: <FaRegChartBar /> },
+  { name: "Finances", icon: <FaCog /> },
   { name: "Teachers", icon: <FaCog /> },
   { name: "Students", icon: <FaCog /> },
   { name: "other-Staffs", icon: <FaCog /> },
@@ -63,7 +64,7 @@ const Dashboard = () => {
   const toggleSidebar = () => setSidebarOpen(!isSidebarOpen);
   const [formType, setFormType] = useState("");
   const [name, setName] = useState("");
- 
+  const [showIncome, setShowIncome] = useState(true);
   const [allSubjects, setAllSubjects] = useState([]);
   const [month, setMonth] = useState("01");
   const [year, setYear] = useState("2024");
@@ -73,6 +74,7 @@ const Dashboard = () => {
     issue:""
   })
   const [noticeModal, setNoticeModal] = useState(false)
+  const [data2, setData2] = useState({ totalIncome: 0, totalExpense: 0, balance: 0 });
   const [getMyStaff, setGetMyStaff] = useState([]);
   const [showSchoolPopup, setShowSchoolPopUp] = useState(false);
   const [showClassModal, setShowClassModal] = useState(false);
@@ -94,6 +96,22 @@ const Dashboard = () => {
     name:"",
     classes:""
   })
+  const [postMyIncome, setPostMyIncome] = useState({
+    name:"",
+    reason:"",
+    amount:"",
+  })
+
+  const [getMyIncome, setGetMyIncome] = useState([])
+  const [postMyExpenses, setPostMyExpenses] = useState({
+    name:"",
+    reason:"",
+    Amount:"",
+  })
+
+  const [incomeModal, setIncomeModal] = useState(false)
+  const [expensesModal, setExpensesModal] = useState(false)
+  const [getMyExpenses, setGetMyExpenses] = useState([])
   const [userData, setUserData] = useState({
     schoolName: "",
     phone: "",
@@ -179,6 +197,9 @@ const Dashboard = () => {
   const [data, setData] = useState({ totalIncome: 0, totalExpense: 0, balance: 0 });
 
 
+  const formatDate = (dateString) => {
+    return dateString ? new Date(dateString).toLocaleDateString() : "N/A";
+  };
   const [chartData, setChartData] = useState({
     pieData: { labels: [], datasets: [] },
     barData: { labels: [], datasets: [] },
@@ -249,7 +270,7 @@ const Dashboard = () => {
     fetchSchoolData();
   }, []);
 
-  const [trendData, setTrendData] = useState([]);
+
 
   const handlePopclose = () => {
     setShowSchoolPopUp(false);
@@ -343,8 +364,8 @@ const Dashboard = () => {
         );
         setSchool(response.data);
         setUser(response.data);
-        setUserId(response.data.school._id);
-        console.log(response.data.school._id);
+        setUserId(response.data._id);
+        console.log("my school id!!",response.data._id);
         console.log(response.data);
         toast.success("successful");
       } catch (error) {
@@ -360,6 +381,7 @@ const Dashboard = () => {
     const { name, value } = e.target;
     setUserData((prevData) => ({ ...prevData, [name]: value }));
   };
+
 
   //submit the school name form
   const SubmitSchoolName = async (e) => {
@@ -387,98 +409,72 @@ const Dashboard = () => {
     }
   };
 
-  //update my schooldata profile
-  // const handleSubmit = async (e) => {
-  //   e.preventDefault();
-  //   setError("");
-  //   console.log(userId)
-  //   setSuccessMessage("");
-  //   try {
-  //     const token = localStorage.getItem("token");
-  //     await axios.put(`${import.meta.env.VITE_API_3}/${userId}`, userData, {
-  //       headers: { Authorization: `Bearer ${token}` },
-  //     });
-  //     toast.success("profile successfully updated");
-  //     console.log(userId)
-  //     setSuccessMessage("Profile updated successfully!");
-  //     setShowPopup(false);
-  //   } catch (err) {
-  //     toast.error("failed to update profile");
-  //     console.log(err);
-  //     setError("Failed to update profile.");
-  //   }
-  // };
 
+  //update the school details
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
     setSuccessMessage("");
-
+  
     try {
       const token = localStorage.getItem("token");
-      const formData = new FormData();
-
-      // Append text fields
-      Object.keys(userData).forEach((key) => {
-        if (key !== "schoolLogo" && key !== "pictures") {
-          formData.append(key, userData[key]);
+    
+  
+      console.log("UserData before submitting:", userData);
+  
+   
+      // Send request with correct headers
+      const response = await axios.put(
+        `${import.meta.env.VITE_API_3}/${userId}`,
+        userData,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "multipart/form-data",
+          },
         }
-      });
-
-      // Append schoolFees and jobVacancies as JSON strings
-      if (userData.schoolFees) {
-        formData.append("schoolFees", JSON.stringify(userData.schoolFees));
-      }
-      if (userData.jobVacancies) {
-        formData.append("jobVacancies", JSON.stringify(userData.jobVacancies));
-      }
-
-      // Append the uploaded file if it exists
-      if (userData.schoolLogo) {
-        formData.append("schoolLogo", userData.schoolLogo);
-      }
-
-      // Send the update request
-      await axios.put(`${import.meta.env.VITE_API_3}/${userId}`, formData, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "multipart/form-data",
-        },
-      });
-
+      );
+  
       toast.success("Profile successfully updated");
       setSuccessMessage("Profile updated successfully!");
       setShowPopup(false);
     } catch (err) {
       toast.error("Failed to update profile");
-      console.error(err);
+      console.error("Update Error:", err);
       setError("Failed to update profile.");
     }
   };
-
+  
+  // Handling File Uploads
+ 
   const handleFileChange = async (e, field) => {
     const file = e.target.files[0];
     const formData = new FormData();
-    formData.append("file", file);
+    formData.append('file', file);
     try {
-      const response = await axios.post(
-        "https://api.cloudinary.com/v1_1/dc0poqt9l/image/upload",
-        formData,
-        {
-          params: {
-            upload_preset: "essential",
-          },
-        }
-      );
+      const response = await axios.post('https://api.cloudinary.com/v1_1/dc0poqt9l/image/upload', formData, {
+        params: {
+          upload_preset: 'essential',
+        },
+      });
       setUserData((prevData) => ({
         ...prevData,
-        [field]: response.data.secure_url,
+        [field]: response.data.secure_url, 
       }));
     } catch (err) {
-      console.error("Error uploading file to Cloudinary", err);
+      console.error('Error uploading file to Cloudinary', err);
     }
   };
 
+  
+  
+  
+ 
+  useEffect(() => {
+    if (userData) {
+      setUserData(userData);
+    }
+  }, [userData]);
   // fetch my data for dashboard
   useEffect(() => {
     const fetchmydashboard = async () => {
@@ -800,18 +796,135 @@ useEffect(() => {
   getNotice()
 }, [])
 
+const handleOpenIncomeModal = () => {
+  setIncomeModal(true)
+}
+
+const handleCloseIncomeModal = () => {
+  setIncomeModal(false)
+}
+
+const handleOpenExpenseModal = () => {
+  setExpensesModal(true)
+}
+
+const handleCloseExpenseModal = () => {
+  setExpensesModal(false)
+}
+
+///post income
+const handleInputForIncome = (e) => {
+  const {name, value} = e.target
+  setPostMyIncome({...postMyIncome, [name]: value})
+}
+
+
+const handleInputForExpenses = (e) => {
+  const {name, value} = e.target
+  setPostMyExpenses({...postMyExpenses, [name]: value})
+}
+
+
+
+
+
+const postIncome = async(e) => {
+  e.preventDefault()
+  try {
+    const token = localStorage.getItem("token")
+    const response = await axios.post(`${import.meta.env.VITE_API_3}/add-income`, postMyIncome, {
+      headers: {Authorization: `Bearer ${token}`}
+    })
+    console.log("successfully sent ")
+    setSuccessMessage("successfully sent")
+  } catch (error) {
+    console.log(error)
+    setError(error.response?.data?.message || "an error occured")
+  }
+}
+
+//post expenses
+const postExpenses = async(e) => {
+  e.preventDefault()
+
+  try {
+    const token = localStorage.getItem("token")
+    const response = await axios.post(`${import.meta.env.VITE_API_3}/add-expense`, postMyExpenses, {
+      headers: {Authorization: `Bearer ${token}`}
+    })
+    console.log("successfully sent ")
+    setSuccessMessage("successfully sent")
+  } catch (error) {
+    console.log(error)
+    setError(error.response?.data?.message || " an error occured")
+  }
+}
+
+
+//get my Income
+useEffect(() => {
+  const getIncome = async() => {
+    try {
+      const token = localStorage.getItem("token")
+      const response = await axios.get(`${import.meta.env.VITE_API_3}/get-income`, {
+        headers:{
+          Authorization:`Bearer ${token}`
+        }
+      })
+      setGetMyIncome(response.data)
+      console.log(response.data)
+    } catch (error) {
+      console.log(error)
+      setError(error?.response?.data?.message)
+    }
+  }
+  getIncome()
+}, [])
+
+
+//get my expenses
+useEffect(() => {
+  const getExpenses = async() => {
+    try {
+      const token = localStorage.getItem("token")
+      const response = await axios.get(`${import.meta.env.VITE_API_3}/get-expenses`, {
+        headers:{
+          Authorization:`Bearer ${token}`
+        }
+      })
+      setGetMyExpenses(response.data)
+      console.log(response.data)
+    } catch (error) {
+      console.log(error)
+      setError(error?.response?.data?.message)
+    }
+  }
+  getExpenses()
+}, [])
+
 
 //get my finances
+
 
   useEffect(() => {
     const mytotalBalance = async() => {
       try {
         const token = localStorage.getItem("token")
-        const response = await axios.get(`${import.meta.env.VITE_API_3}/get-totals`, {
+        const response = await axios.get(`${import.meta.env.VITE_API_3}/get-total`, {
           headers: {Authorization: `Bearer ${token}`}
         })
-        setData(response.data)
-        console.log(response.data)
+        setData(Array.isArray(response.data) ? response.data : [response.data])
+        console.log("total !!!!!",response.data)
+
+        console.log("Data Array:", data);
+console.log("Is Data an Array?", Array.isArray(data));
+console.log("Pie Data for First Entry:", data.length > 0 ? [
+  { name: "Income", value: Number(data[0]?.totalIncome) || 0, fill: "#4CAF50" },
+  { name: "Expenses", value: Number(data[0]?.totalExpense) || 0, fill: "#F44336" }
+] : "No Data");
+
+
+
       } catch (error) {
         console.log(error)
         setError(error?.response?.data?.message)
@@ -821,26 +934,49 @@ useEffect(() => {
   }, [])
 
 
-    const fetchFilteredData = () => {
-      axios.get(`${import.meta.env.VITE_API_3}/get-filtered-data?month=${month}&year=${year}`, {
-        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` }
-      })
-      .then((res) => setData(res.data))
-      .catch((err) => console.error(err));
-    }
+
+
+  ////get data for the chart
+  useEffect(() => {
+    const mytotalBalance = async () => {
+      try {
+        const token = localStorage.getItem("token");
+        const response = await axios.get(`${import.meta.env.VITE_API_3}/get-total`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+  
+     
+        setData2(response.data);
+        console.log("Total Data:", response.data);
+      } catch (error) {
+        console.log(error);
+        setError(error?.response?.data?.message);
+      }
+    };
+  
+    mytotalBalance();
+  }, []);
+  
+
+
+
 
 
 
 
   const pieData = [
-    { name: "Income", value: data.totalIncome, fill: "#4CAF50" },
-    { name: "Expenses", value: data.totalExpense, fill: "#F44336" },
+    { name: "Income", value: data?.totalIncome || 0, fill: "#4CAF50" },
+    { name: "Expenses", value: data?.totalExpense || 0, fill: "#F44336" },
+  ];
+  
+  const barData = [
+    { name: "Income", amount: data?.totalIncome || 0 },
+    { name: "Expenses", amount: data?.totalExpense || 0 },
   ];
 
-  const barData = [
-    { name: "Income", amount: data.totalIncome },
-    { name: "Expenses", amount: data.totalExpense },
-  ];
+  console.log(`Pie Data for index $:`, pieData);
+  console.log(`Bar Data for index $:`, barData);
+  
 
   if (loading) return <p>Loading...</p>;
   const renderContent = () => {
@@ -983,65 +1119,216 @@ useEffect(() => {
 
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        {/* Pie Chart */}
-        <div className="bg-white p-4 shadow-lg rounded-xl">
-          <h3 className="text-lg font-semibold mb-3">Income vs Expenses</h3>
-          <PieChart width={300} height={300}>
-            <Pie data={pieData} dataKey="value" nameKey="name" cx="50%" cy="50%" outerRadius={100} />
-            <Tooltip />
-          </PieChart>
-        </div>
+  
 
-        {/* Bar Chart */}
-        <div className="bg-white p-4 shadow-lg rounded-xl">
-          <h3 className="text-lg font-semibold mb-3">Financial Overview</h3>
-          <BarChart width={400} height={250} data={barData}>
-            <XAxis dataKey="name" />
-            <YAxis />
-            <Tooltip />
-            <Legend />
-            <Bar dataKey="amount" fill="#2196F3" />
-          </BarChart>
-        </div>
-      </div>
+  
 
       {/* Cryptocurrency Rating Graph */}
-      <div className="mt-6 p-4 bg-gray-100 shadow-lg rounded-xl">
-        <h3 className="text-lg font-semibold mb-3">Balance Status</h3>
-        <div className="text-2xl font-bold" style={{ color: data.balance >= 0 ? "#4CAF50" : "#F44336" }}>
-          {data.balance >= 0 ? "🟢 Positive Balance" : "🔴 Negative Balance"}
-        </div>
-      </div>
+      <div className="text-2xl font-bold" style={{ color: data2?.balance >= 0 ? "#4CAF50" : "#F44336" }}>
+  {data2?.balance >= 0  && data2?.totalExpense ? "🟢 Positive Balance in finances" : "🔴 Negative Balance"}
+</div>
 
-      <div className="bg-white p-4 shadow-lg rounded-xl">
-    
-      <div className="flex gap-4 mb-4">
-      <select value={month} onChange={(e) => setMonth(e.target.value)} className="border p-2">
-        {Array.from({ length: 12 }, (_, i) => (
-          <option key={i + 1} value={(i + 1).toString().padStart(2, "0")}>
-            {new Date(2024, i, 1).toLocaleString("en-US", { month: "long" })}
-          </option>
-        ))}
-      </select>
 
-      <input
-        type="number"
-        value={year}
-        onChange={(e) => setYear(e.target.value)}
-        className="border p-2 w-20"
-        placeholder="Year"
-      />
-
-      <button onClick={fetchFilteredData} className="bg-blue-500 text-white px-4 py-2">
-        Filter
-      </button>
-    </div>
-
-    <TrendsChart data={data} />
-    </div>
           </>
         );
+      case "Finances": 
+      return (
+        <>
+          <div className="flex-col space-x-7 mb-2">
+              <button
+                className="bg-green-500 text-white py-2 px-4 rounded"
+                onClick={() => handleOpenIncomeModal()}
+              >
+                Add Income
+              </button>
+              <button
+                className="bg-red-500 text-white py-2 px-4 rounded"
+   
+                onClick={() => handleOpenExpenseModal()}
+              >
+                Add Expenses
+              </button>
+              <button
+                className="bg-blue-500 text-white py-2 px-4 rounded"
+   
+              >
+               {Array.isArray(data) && data.length > 0 ? (
+        data.map((dat) => (
+          <h2 className=" font-bold text-2xl">balance {dat.balance.toLocaleString()}</h2>
+        ))
+      ) : (<h4>0.00</h4>)}
+              
+              </button>
+            </div>
+
+
+
+            {incomeModal && (
+        <div className="fixed inset-0 overflow-y-scroll  bg-gray-900 bg-opacity-50 flex justify-center items-center">
+          <div className="bg-white p-6 rounded-md shadow-md w-96">
+
+            {successMessage && <p className="text-green-500 mb-2">{successMessage}</p>}
+            {error && <p className="text-red-500 mb-2">{error}</p>}
+            <h2 className="text-lg font-bold   ">Add an Income</h2>
+            <form onSubmit={postIncome}>
+              <label className="block mt-2 mb-2">Name</label>
+              <input type="text" name="name" className="w-full p-2 border rounded-md" onChange={handleInputForIncome} />
+
+              <label className="block mt-2 mb-2">Amount</label>
+              <input type="text" name="amount" className="w-full p-2 border rounded-md" onChange={handleInputForIncome} />
+
+              <label className="block mt-2 mb-2">reason</label>
+              <input type="text" name="reason" className="w-full p-2 border rounded-md" onChange={handleInputForIncome} />
+
+     
+              <button type="submit" className="w-full bg-green-500 text-white py-2 mt-4 rounded-md hover:bg-green-700">
+                {loading ? "Submitting..." : "Submit"}
+              </button>
+              <button onClick={handleCloseIncomeModal} className="w-full bg-red-500 text-white py-2 mt-2 rounded-md hover:bg-red-700">
+                Cancel
+              </button>
+            </form>
+          </div>
+        </div>
+      )}
+
+
+      {expensesModal && (
+        <div className="fixed inset-0 overflow-y-scroll  bg-gray-900 bg-opacity-50 flex justify-center items-center">
+          <div className="bg-white p-6 rounded-md shadow-md w-96">
+
+          {successMessage && <p className="text-green-500 mb-2">{successMessage}</p>}
+          {error && <p className="text-red-500 mb-2">{error}</p>}
+            <h2 className="text-lg font-bold ">add expenses</h2>
+            <form onSubmit={postExpenses}>
+
+              <label className="block mt-2 mb-2">Name</label>
+              <input type="text" name="name" className="w-full p-2 border rounded-md" onChange={handleInputForExpenses} />
+
+              <label className="block mt-2 mb-2">Amount</label>
+              <input type="text" name="amount" className="w-full p-2 border rounded-md" onChange={handleInputForExpenses} />
+
+              <label className="block mt-2 mb-2">reason</label>
+              <input type="text" name="reason" className="w-full p-2 border rounded-md" onChange={handleInputForExpenses} />
+
+     
+              <button type="submit" className="w-full bg-green-500 text-white py-2 mt-4 rounded-md hover:bg-green-700">
+                {loading ? "Submitting..." : "Submit"}
+              </button>
+              <button onClick={handleCloseExpenseModal} className="w-full bg-red-500 text-white py-2 mt-2 rounded-md hover:bg-red-700">
+                Cancel
+              </button>
+            </form>
+          </div>
+        </div>
+      )}
+
+
+    {/* Toggle buttons for showing different content */}
+
+      <div className="flex justify-center mb-4">
+      <button
+        className={`py-2 px-4 mx-2 rounded ${
+          showIncome ? "bg-green-500 text-white" : "bg-gray-200 text-black"
+        }`}
+        onClick={() => setShowIncome(true)}
+      >
+        Show Income
+      </button>
+      <button
+        className={`py-2 px-4 mx-2 rounded ${
+          !showIncome ? "bg-red-500 text-white" : "bg-gray-200 text-black"
+        }`}
+        onClick={() => setShowIncome(false)}
+      >
+        Show Expenses
+      </button>
+    </div>
+ {showIncome ? (
+      <>
+      {Array.isArray(data) && data.length > 0 ? (
+        data.map((dat) => (
+          <h2 className="text-green-600 font-bold text-2xl">Total Income: {dat.totalIncome.toLocaleString()}</h2>
+        ))
+      ) : (<h4>No total income yet</h4>)}
+       
+        <table className="table-auto w-full text-left border-collapse">
+          <thead>
+            <tr className="border-b">
+              <th className="p-4 text-sm text-gray-600">Name</th>
+              <th className="p-4 text-sm text-gray-600">Amount</th>
+              <th className="p-4 text-sm text-gray-600">Income for</th>
+              <th className="p-4 text-sm text-gray-600">Date</th>
+            </tr>
+          </thead>
+          <tbody>
+            {getMyIncome && getMyIncome.length > 0 ? (
+              getMyIncome.map((inc, index) => (
+                <tr key={index} className="border-b hover:bg-gray-50">
+                  <td className="p-4 text-sm">{inc.name}</td>
+                  <td className="p-4 text-sm">{inc.amount}</td>
+                  <td className="p-4 text-sm">{inc.reason}</td>
+                  <td className="p-4 text-sm">
+                    {new Date(inc.date).toLocaleDateString()}
+                  </td>
+                 
+                </tr>
+              
+              ))
+            ) : (
+              <tr>
+                <td colSpan="4" className="p-4 text-center text-sm">
+                  No income records yet.
+                </td>
+              </tr>
+            )}
+          </tbody>
+        </table>
+      </>
+    ) : (
+      <>
+      {Array.isArray(data) && data.length > 0 ? (
+        data.map((dat) => (
+          <h2 className="text-red-600 font-bold text-2xl">total Expenses: {dat.totalExpense.toLocaleString()}</h2>
+        ))
+      ) : (<h4>No total expenses  yet</h4>)}
+       
+   
+        <table className="table-auto w-full text-left border-collapse">
+          <thead>
+            <tr className="border-b">
+              <th className="p-4 text-sm text-gray-600">Name</th>
+              <th className="p-4 text-sm text-gray-600">Amount</th>
+              <th className="p-4 text-sm text-gray-600">Expense for</th>
+              <th className="p-4 text-sm text-gray-600">Date</th>
+            </tr>
+          </thead>
+          <tbody>
+            {getMyExpenses && getMyExpenses.length > 0 ? (
+              getMyExpenses.map((exp, index) => (
+                <tr key={index} className="border-b hover:bg-gray-50">
+                  <td className="p-4 text-sm">{exp.name}</td>
+                  <td className="p-4 text-sm">{exp.amount}</td>
+                  <td className="p-4 text-sm">{exp.reason}</td>
+                  <td className="p-4 text-sm">
+                    {new Date(exp.date).toLocaleDateString()}
+                  </td>
+                </tr>
+              ))
+            ) : (
+              <tr>
+                <td colSpan="4" className="p-4 text-center text-sm">
+                  No expense records yet.
+                </td>
+              </tr>
+            )}
+          </tbody>
+        </table>
+        </>
+    )}
+
+        </>
+      )
       case "Reports":
         return (
           <>
@@ -1101,6 +1388,10 @@ useEffect(() => {
       case "Settings":
         return (
           <div>
+            {error && <div className="text-red-500 text-2xl font-semibold mt-5">{error}</div>}
+            {successMessage && (
+              <div className="text-green-500 text-2xl font-semibold mt-5">{successMessage}</div>
+            )}
             <div className="flex-col-3 space-x-3">
               <button
                 onClick={() => setShowSchoolPopUp(true)}
@@ -1117,118 +1408,126 @@ useEffect(() => {
             </div>
 
             <div className="max-w-6xl mx-auto p-6">
-              {/* School Details Section */}
-              <section className="bg-gradient-to-r from-blue-500 to-purple-600 text-white shadow-lg rounded-xl p-8 mb-8">
-                <h2 className="text-2xl font-extrabold mb-6">
-                  🏫 School Details
-                </h2>
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                  {[
-                    { label: "Terms and Conditions", value: user.TC },
-                    { label: "School News", value: user.schoolNews },
-                    { label: "History", value: user.history },
-                    { label: "Speech", value: user.vcspeech },
-                    { label: "Aims and Objectives", value: user.AO },
-                    { label: "Ownership", value: user.ownership },
-                  ].map((detail, idx) => (
-                    <div
-                      key={idx}
-                      className="bg-white text-gray-800 p-5 rounded-lg shadow-md hover:shadow-lg transition-all"
-                    >
-                      <p className="text-sm font-semibold text-gray-500">
-                        {detail.label}
-                      </p>
-                      <p className="text-lg font-bold">
-                        {detail.value || "N/A"}
-                      </p>
-                    </div>
-                  ))}
-                </div>
-              </section>
+            <div className="max-w-6xl mx-auto p-6">
+      {/* General Information */}
+      <section className="bg-gradient-to-r from-blue-500 to-purple-600 text-white shadow-lg rounded-xl p-8 mb-8">
+        <h2 className="text-2xl font-extrabold mb-6">🏫 School Information</h2>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {[
+            { label: "School Name", value: user.schoolName },
+            { label: "Phone", value: user.phone },
+            { label: "Category", value: user.category },
+            { label: "State", value: user.state },
+            { label: "LGA", value: user.LGA },
+            { label: "Location", value: user.location },
+            { label: "Ownership", value: user.ownership },
+          ].map((detail, idx) => (
+            <div key={idx} className="bg-white text-gray-800 p-5 rounded-lg shadow-md hover:shadow-lg transition-all">
+              <p className="text-sm font-semibold text-gray-500">{detail.label}</p>
+              <p className="text-lg font-bold">{detail.value || "N/A"}</p>
+            </div>
+          ))}
+        </div>
+      </section>
 
-              {/* Fees Section */}
-              <section className="bg-white shadow-lg rounded-xl p-8 mb-8 border-l-8 border-blue-500">
-                <h2 className="text-2xl font-extrabold text-gray-800 mb-6">
-                  💰 School Fees
-                </h2>
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                  {[1, 2, 3, 4, 5, 6, 7].map((num) => (
-                    <div
-                      key={num}
-                      className="bg-gray-100 p-6 rounded-lg shadow-md hover:bg-blue-100 transition-all"
-                    >
-                      <p className="text-sm text-gray-500">Class {num}</p>
-                      <p className="text-lg font-bold">
-                        {user[`class${num}`] || "N/A"}
-                      </p>
-                      <p className="text-sm text-gray-500 mt-2">Amount</p>
-                      <p className="text-lg font-bold text-blue-600">
-                        {user[`schoolfees${num}`] || "N/A"}
-                      </p>
-                    </div>
-                  ))}
-                </div>
-              </section>
+      {/* Admission Information */}
+      <section className="bg-white shadow-lg rounded-xl p-8 mb-8 border-l-8 border-blue-500">
+        <h2 className="text-2xl font-extrabold text-gray-800 mb-6">📅 Admission Details</h2>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {[
+            { label: "Admission Start Date", value: formatDate(user.admissionStartDate) },
+            { label: "Admission End Date", value: formatDate(user.admissionEndDate) },
+            { label: "Admission Requirements", value: user.admissionRequirements },
+            { label: "Departments", value: user.departments },
+            { label: "Faculty", value: user.faculty },
+          ].map((detail, idx) => (
+            <div key={idx} className="bg-gray-100 p-6 rounded-lg shadow-md hover:bg-blue-100 transition-all">
+              <p className="text-sm text-gray-500">{detail.label}</p>
+              <p className="text-lg font-bold">{detail.value || "N/A"}</p>
+            </div>
+          ))}
+        </div>
+      </section>
 
-              {/* Job Vacancy Section */}
-              <section className="bg-gradient-to-r from-green-500 to-teal-500 text-white shadow-lg rounded-xl p-8 mb-8">
-                <h2 className="text-2xl font-extrabold mb-6">
-                  📢 Job Vacancies
-                </h2>
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                  {[1, 2, 3, 4, 5, 6].map((num) => (
-                    <div
-                      key={num}
-                      className="bg-white text-gray-800 p-6 rounded-lg shadow-md hover:shadow-lg transition-all"
-                    >
-                      <p className="text-sm font-semibold text-gray-500">
-                        Position {num}
-                      </p>
-                      <p className="text-lg font-bold">
-                        {user[`position${num}`] || "N/A"}
-                      </p>
-                      <p className="text-sm text-gray-500 mt-2">Salary</p>
-                      <p className="text-lg font-bold text-green-600">
-                        {user[`salary${num}`] || "N/A"}
-                      </p>
-                      <p className="text-sm text-gray-500 mt-2">
-                        Qualification
-                      </p>
-                      <p className="text-lg font-bold">
-                        {user[`qualification${num}`] || "N/A"}
-                      </p>
-                    </div>
-                  ))}
-                </div>
-              </section>
+       {/* School Details Section */}
+       <section className="bg-gradient-to-r from-blue-500 to-purple-600 text-white shadow-lg rounded-xl p-8 mb-8">
+        <h2 className="text-2xl font-extrabold mb-6">🏫 School Details</h2>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {[
+            { label: "Terms and Conditions", value: user.TC },
+            { label: "School News", value: user.schoolNews },
+            { label: "History", value: user.history },
+            { label: "Speech", value: user.vcspeech },
+            { label: "Aims and Objectives", value: user.AO },
+            { label: "Ownership", value: user.ownership },
+          ].map((detail, idx) => (
+            <div key={idx} className="bg-white text-gray-800 p-5 rounded-lg shadow-md hover:shadow-lg transition-all">
+              <p className="text-sm font-semibold text-gray-500">{detail.label}</p>
+              <p className="text-lg font-bold">{detail.value || "N/A"}</p>
+            </div>
+          ))}
+        </div>
+      </section>
 
-              {/* Images Section */}
-              <section className="bg-white shadow-lg rounded-xl p-8">
-                <h2 className="text-2xl font-extrabold text-gray-800 mb-6">
-                  📸 Images
-                </h2>
-                <div className="flex flex-wrap justify-center gap-6">
-                  {[
-                    user.coverPicture,
-                    user.schoolPicture,
-                    user.picture,
-                    user.picture1,
-                    user.picture2,
-                    user.picture3,
-                    user.picture4,
-                    user.vcpicture,
-                  ]
-                    .filter((pic) => pic)
-                    .map((pic, idx) => (
-                      <img
-                        key={idx}
-                        src={pic}
-                        alt={`School image ${idx + 1}`}
-                        className="w-40 h-40 rounded-xl shadow-md object-cover hover:scale-105 transition-transform"
-                      />
-                    ))}
-                </div>
-              </section>
+      {/* Fees Section */}
+      <section className="bg-white shadow-lg rounded-xl p-8 mb-8 border-l-8 border-green-500">
+        <h2 className="text-2xl font-extrabold text-gray-800 mb-6">💰 School Fees</h2>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {[1, 2, 3, 4, 5, 6, 7].map((num) => (
+            <div key={num} className="bg-gray-100 p-6 rounded-lg shadow-md hover:bg-green-100 transition-all">
+              <p className="text-sm text-gray-500">Class {num}</p>
+              <p className="text-lg font-bold">{user[`class${num}`] || "N/A"}</p>
+              <p className="text-sm text-gray-500 mt-2">Amount</p>
+              <p className="text-lg font-bold text-green-600">{user[`schoolfees${num}`] || "N/A"}</p>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* Job Vacancy Section */}
+      <section className="bg-gradient-to-r from-green-500 to-teal-500 text-white shadow-lg rounded-xl p-8 mb-8">
+        <h2 className="text-2xl font-extrabold mb-6">📢 Job Vacancies</h2>
+        <p className="text-lg font-semibold">Total Vacancies: {user.NumberOfVacancy || "N/A"}</p>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-4">
+          {[1, 2, 3, 4, 5, 6].map((num) => (
+            <div key={num} className="bg-white text-gray-800 p-6 rounded-lg shadow-md hover:shadow-lg transition-all">
+              <p className="text-sm font-semibold text-gray-500">Position {num}</p>
+              <p className="text-lg font-bold">{user[`position${num}`] || "N/A"}</p>
+              <p className="text-sm text-gray-500 mt-2">Salary</p>
+              <p className="text-lg font-bold text-green-600">{user[`salary${num}`] || "N/A"}</p>
+              <p className="text-sm text-gray-500 mt-2">Qualification</p>
+              <p className="text-lg font-bold">{user[`qualification${num}`] || "N/A"}</p>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* Images Section */}
+      <section className="bg-white shadow-lg rounded-xl p-8">
+        <h2 className="text-2xl font-extrabold text-gray-800 mb-6">📸 Images</h2>
+        <div className="flex flex-wrap justify-center gap-6">
+          {[
+            user.coverPicture,
+            user.schoolPicture,
+            user.picture,
+            user.picture1,
+            user.picture2,
+            user.picture3,
+            user.picture4,
+            user.vcpicture,
+          ]
+            .filter((pic) => pic)
+            .map((pic, idx) => (
+              <img
+                key={idx}
+                src={pic}
+                alt={`School image ${idx + 1}`}
+                className="w-40 h-40 rounded-xl shadow-md object-cover hover:scale-105 transition-transform"
+              />
+            ))}
+        </div>
+      </section>
+    </div>
             </div>
 
             {showSchoolPopup && (
@@ -1326,16 +1625,24 @@ useEffect(() => {
 
                     {/* New input fields */}
                     <div className="flex flex-col">
+                    <h4 className="text-red-500 text-center ">Please fill in the name of your school</h4>
                       <label className="block text-sm font-medium text-gray-600 mb-1">
                         School Name
                       </label>
                       <input
-                        type="text"
-                        name="schoolName"
-                        value={userData.schoolName}
-                        onChange={handleChange}
-                        className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
-                      />
+  type="text"
+  name="schoolName"
+  defaultValue={localStorage.getItem("schoolName") || ""} // Prefill directly
+  onChange={(e) => {
+    setUserData(prev => ({
+      ...prev,
+      schoolName: e.target.value
+    }));
+    localStorage.setItem("schoolName", e.target.value); // Save value on change
+  }}
+  className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
+/>
+
                     </div>
 
                     <div className="flex flex-col">
@@ -2194,10 +2501,7 @@ useEffect(() => {
               </div>
             )}
 
-            {error && <div className="text-red-500 mt-5">{error}</div>}
-            {successMessage && (
-              <div className="text-green-500 mt-5">{successMessage}</div>
-            )}
+          
           </div>
         );
       case "Teachers":
@@ -2690,7 +2994,9 @@ useEffect(() => {
           </>
         </>;
       case "Attendance":
-        return <></>;
+        return <>
+        
+        </>;
       default:
         return null;
     }
@@ -2700,22 +3006,27 @@ useEffect(() => {
     <div className="flex h-screen mt-5 bg-gray-100">
       {/* Sidebar */}
       <div
-        className={`fixed inset-y-0 left-0 bg-white shadow-lg w-64 p-5 transition-transform transform ${
-          isSidebarOpen ? "translate-x-0" : "-translate-x-full"
-        } lg:translate-x-0 lg:static`}
-      >
+              className={`fixed top-3 left-0 h-full bg-gradient-to-b overflow-y-scroll from-green-700 to-green-900 pb-10 text-white w-64 pt-16 transform ${
+    isSidebarOpen ? "translate-x-0" : "-translate-x-full ml-0"
+  } transition-transform duration-300 md:translate-x-0 md:w-64`}
+>
+      
+  
         <div className="flex justify-between items-center mb-5">
-          <h2 className="text-xl font-bold text-green-600">Dashboard</h2>
-          <h2 className="text-xl  text-green-600">{user.school?.schoolName}</h2>
+          <h2 className="text-xl font-bold text-white">Dashboard</h2>
+          <h2 className="text-xl  text-white">{user.school?.schoolName}|| {user.schoolName}  </h2>
         </div>
-        <nav>
+        <button className="lg:hidden" onClick={toggleSidebar}>
+          X
+        </button>
+        <nav className="overflow-y-auto max-h-[calc(100vh-100px)]">
           {sidebarItems.map((item, index) => (
             <button
               key={index}
               className={`flex items-center gap-3 block w-full text-left py-2 px-4 rounded-lg ${
                 activeSection === item.name
                   ? "bg-green-600 text-white"
-                  : "text-gray-700 hover:bg-gray-200"
+                  : "text-white hover:bg-black"
               }`}
               onClick={() => {
                 setActiveSection(item.name);
@@ -2726,13 +3037,14 @@ useEffect(() => {
             </button>
           ))}
         </nav>
-        <button className="lg:hidden" onClick={toggleSidebar}>
-          X
-        </button>
+      
       </div>
 
       {/* Main Content */}
-      <div className="flex-1 p-6 lg:">
+      <div   className={`flex-1 p-6 transition-all duration-300 ${
+    isSidebarOpen ? "ml-64" : "ml-0"
+  } md:ml-64`}
+>
         <button className="lg:hidden mb-4" onClick={toggleSidebar}>
           <FiMenu size={24} />
         </button>

@@ -14,7 +14,7 @@ import AllStore from "./AllStore";
 import AllTeacher from "./AllTeacher";
 import AllTraining from "./AllTraining";
 import AllTutorial from "./AllTutorial";
-import { usePaymentStatus } from "../../Context/PaymentContext";
+
 const AdminDashboard = () => {
   const [isSidebarVisible, setSidebarVisible] = useState(false);
   const { isPaymentActive, setIsPaymentActive } = usePaymentStatus();

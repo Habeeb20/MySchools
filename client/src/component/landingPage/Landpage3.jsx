@@ -45,7 +45,7 @@ const Landpage3 = () => {
             <div className="w-full lg:w-1/2 mb-4 lg:mb-0">
               <h2 className="text-2xl font-bold mb-4">Do more with student I.D</h2>
               <h1 className="text-xl text-gray-600">
-                Lorem ipsum dolor sit amet consectetur. Et rhoncus nunc dictum massa.
+                Having a student ID is another opportunity for you to explore.
               </h1>
             </div>
             <div className="w-full lg:w-2/5">

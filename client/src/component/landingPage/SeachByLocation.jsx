@@ -106,7 +106,7 @@ const SearchByLocation = () => {
     const fetchLocationCounts = async () => {
       try {
         const response = await axios.get(
-          `${import.meta.env.VITE_API}/schools/location/counts`
+          `${import.meta.env.VITE_API_3}/location/counts`
         );
     
         setStateCounts(response.data);

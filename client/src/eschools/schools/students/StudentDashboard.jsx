@@ -862,20 +862,24 @@ useEffect(() => {
   };
 
   return (
-    <div className="flex h-screen mt-5 bg-gray-100">
+    <div   className={`flex-1 p-6 transition-all duration-300 ${
+      isSidebarOpen ? "ml-64" : "ml-0"
+    } md:ml-64`}
+  >
+   
       {/* Sidebar */}
       <div
-        className={`fixed inset-y-0 left-0 bg-white shadow-lg w-64 h-100vh min-h-screen p-5 transition-transform transform ${
-          isSidebarOpen ? "translate-x-0" : "-translate-x-full"
-        } lg:translate-x-0 lg:static`}
-      >
+              className={`fixed top-3 left-0 h-full bg-gradient-to-b overflow-y-scroll from-green-700 to-green-900 text-white w-64 pt-16 transform ${
+    isSidebarOpen ? "translate-x-0" : "-translate-x-full ml-0"
+  } transition-transform duration-300 md:translate-x-0 md:w-64`}
+>
         <div className="flex justify-between items-center mb-5">
-          <h2 className="text-xl font-bold text-blue-600">{myData?.role}'s Dashboard</h2>
+          <h2 className="text-xl font-bold text-white-600">{myData?.role}'s Dashboard</h2>
       
         </div>
         <nav>
-        <h2 className="text-xl  text-blue-600 ">{myData?.name}
-        <button className="lg:hidden text-red-600 pl-5" onClick={toggleSidebar}>
+        <h2 className="text-xl  text-white-600 ">{myData?.name}
+        <button className="lg:hidden text-white pl-5" onClick={toggleSidebar}>
           X
         </button></h2>
       
@@ -885,8 +889,8 @@ useEffect(() => {
               key={index}
               className={`flex items-center gap-3 block w-full text-left py-2 px-4 rounded-lg ${
                 activeSection === item.name
-                  ? "bg-blue-600 text-white"
-                  : "text-gray-700 hover:bg-gray-200"
+                  ? "bg-green-600 text-white"
+                  : "text-white-700 hover:bg-black"
               }`}
               onClick={() => {
                 setActiveSection(item.name);

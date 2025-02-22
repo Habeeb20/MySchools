@@ -40,9 +40,9 @@ const SearchByCategory = () => {
     const fetchCategoryCounts = async () => {
       try {
         // Fetch school category counts
-        const schoolResponse = await axios.get(`${import.meta.env.VITE_API}/schools/category/counts`);
+        const schoolResponse = await axios.get(`${import.meta.env.VITE_API_3}/category/counts`);
         // Fetch teacher count
-        const teacherResponse = await axios.get(`${import.meta.env.VITE_API}/teacher/count`);
+        const teacherResponse = await axios.get(`${import.meta.env.VITE_API_3}/countTeacher`);
         const examResponse = await axios.get(`${import.meta.env.VITE_APIE}/count`);
         const bookshopResponse = await axios.get(`${import.meta.env.VITE_APIB}/count`);
         const tutorialResponse = await axios.get(`${import.meta.env.VITE_APITU}/count`);
@@ -56,6 +56,7 @@ const SearchByCategory = () => {
         });
 
         console.log({ ...schoolResponse.data, teachers: teacherResponse.data.count,    exams: examResponse.data.count,    bookshops: bookshopResponse.data.count,      tutorials: tutorialResponse.data.count,   });
+        console.log({teachers: teacherResponse.data.count})
       } catch (error) {
         console.error("Error fetching category counts:", error);
       }

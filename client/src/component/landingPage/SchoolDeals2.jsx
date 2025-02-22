@@ -10,7 +10,7 @@ const SchoolDeals2 = () => {
   useEffect(() => {
     const fetchSchools = async () => {
       try {
-        const response = await fetch(`${import.meta.env.VITE_API}/schools`);
+        const response = await fetch(`${import.meta.env.VITE_API_3}/getallschools`);
         const data = await response.json();
         setSchools(data);
         toast.success("You are welcome!");

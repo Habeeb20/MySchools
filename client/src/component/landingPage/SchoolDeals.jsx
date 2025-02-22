@@ -9,7 +9,7 @@ const SchoolDeals = () => {
   useEffect(() => {
     const fetchSchools = async () => {
       try {
-        const response = await fetch(`${import.meta.env.VITE_API}/schools`);
+        const response = await fetch(`${import.meta.env.VITE_API_3}/getallschools`);
         const data = await response.json();
         setSchools(data);
         toast.success("you are welcome")
@@ -49,11 +49,12 @@ const SchoolDeals = () => {
                 <p className="text-gray-600 text-sm">Category: {school.category}</p>
                 <p className="text-gray-600 text-sm">{school.location}</p>
               </div>
-              <Link to={`/schooldetail/${school._id}`}>
-                <button className="bg-blue-600 text-white px-4 py-2 rounded-lg mb-4 mx-4">
-                  View More
-                </button>
-              </Link>
+              <Link to={`/schooldetail/${school.slug}`}>
+  <button className="bg-blue-600 text-white px-4 py-2 rounded-lg mb-4 mx-4">
+    View More
+  </button>
+</Link>
+
             </div>
           ))
         )}

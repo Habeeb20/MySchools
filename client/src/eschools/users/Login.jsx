@@ -50,7 +50,7 @@ const Login = () => {
           navigate("/dashboard");
           break;
         case "store-owner":
-          navigate("/store-dashboard");
+          navigate("/storedashboard");
           break;
         case "tutorial-center":
           navigate("/tutorial-dashboard");

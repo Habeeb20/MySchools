@@ -6,7 +6,7 @@ const Landpage1 = () => {
       id: 1,
       title: 'Sign up',
       description: 'Signup up to your school on Eschools',
-      link: '/schoolslogin',
+      link: '/login',
     },
     {
       id: 2,
@@ -17,7 +17,7 @@ const Landpage1 = () => {
     {
       id: 3,
       title: 'make a request',
-      description: '        If you need help, let us know. We’re here to assist you promptly',
+      description: 'If you need help, let us know. We’re here to assist you promptly',
       link: '/request',
     },
   ];

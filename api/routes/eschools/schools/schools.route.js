@@ -2,10 +2,12 @@ import express from "express";
 import User from "../../../models/Eschools/user.js";
 import School from "../../../models/Eschools/schools/school.schema.js"
 import jwt from "jsonwebtoken"
-import { roleBasedAccess, Protect } from "../../../middleware/protect.js";
+import { roleBasedAccess, Protect, verifyToken } from "../../../middleware/protect.js";
 import { CloudinaryStorage } from "multer-storage-cloudinary";
 import cloudinary from "cloudinary"
+import mongoose from "mongoose";
 import SchoolUsers from "../../../models/Eschools/schools/schoolUsers.js";
+
 const schoolrouter = express.Router()
 
 
@@ -49,7 +51,7 @@ schoolrouter.post(
   
 
 //get a school for schoolName
-schoolrouter.get("/getschooldata", Protect, async (req, res) => {
+schoolrouter.get("/getschooldata", verifyToken, async (req, res) => {
     try {
         const userId = req.user.id;
         const school = await School.findOne({ userId });
@@ -57,8 +59,8 @@ schoolrouter.get("/getschooldata", Protect, async (req, res) => {
         if (!school) {
             return res.status(404).json({ message: "No school registered" });
         }
-
-        return res.status(200).json({ school });
+        console.log("my school!!!!", school)
+        return res.status(200).json( school );
     } catch (error) {
         console.error(error);
         return res.status(500).json({ message: "An error occurred" });
@@ -66,91 +68,18 @@ schoolrouter.get("/getschooldata", Protect, async (req, res) => {
 });
 
 
+//get all schools 
+schoolrouter.get("/getallschools", async(req, res) => {
+  try {
+    const school = await School.find({})
+    return res.status(200).json(school)
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ message: "An error occurred" });
+  }
+})
 
 
-
-// schoolrouter.put(
-//     "/:id",
-//     Protect,
-//     roleBasedAccess(["school-administrator"]),
-//     async (req, res) => {
-//       const { id } = req.params;
-//       console.log(req.params)
-  
-//       try {
-    
-//         const user = await User.findById(req.user.id);
-//         if (!user) {
-//           return res.status(404).json({ message: "User account not found" });
-//         }
-  
-     
-//         const school = await School.findById(id);
-//         if (!school) {
-//           return res.status(404).json({ message: "School not found" });
-//         }
-  
-     
-//         if (school.userId.toString() !== req.user.id) {
-//           return res.status(403).json({ message: "Not authorized to update this school" });
-//         }
-  
-//         let updates = { ...req.body };
-  
-      
-//         const uploadFile = async (file) => {
-//           const result = await cloudinary.uploader.upload(file.tempFilePath, {
-//             folder: "schools",
-//           });
-//           return result.secure_url;
-//         };
-  
-     
-//         if (req.files) {
-//           const fileKeys = Object.keys(req.files);
-//           for (const key of fileKeys) {
-//             updates[`pictures.${key}`] = await uploadFile(req.files[key]);
-//           }
-//         }
-  
-
-//         if (req.body.schoolFees) {
-//           updates.schoolFees = JSON.parse(req.body.schoolFees); // Expecting JSON array input
-//         }
-  
-//         // Handle dynamic updates for jobVacancies array
-//         if (req.body.jobVacancies) {
-//           updates.jobVacancies = JSON.parse(req.body.jobVacancies); // Expecting JSON array input
-//         }
-  
-//         // Update the school in the database
-//         const updatedSchool = await School.findByIdAndUpdate(id, updates, { new: true });
-  
-//         if (!updatedSchool) {
-//           return res.status(500).json({ message: "Failed to update school" });
-//         }
-  
-//         res.status(200).json({
-//           message: "School updated successfully",
-//           updatedSchool,
-//         });
-//       } catch (error) {
-//         console.error(error);
-//         res.status(500).json({ message: "An error occurred" });
-//       }
-//     }
-//   );
-
-//get all school
-// schoolrouter.get("/school", async(req, res) => {
-//     try {
-//         const schools = await School.find({})
-//         res.json(schools)
-//     } catch (error) {
-//         console.log(error)
-//         return res.status(500).json({message: "an error occurred"})
-//     }
-// })
 
 
 
@@ -164,66 +93,88 @@ schoolrouter.put(
     const { id } = req.params;
 
     try {
-      console.log(req.params);
+      console.log("Received ID:", id);
 
-      // Verify user existence
+      if (!mongoose.Types.ObjectId.isValid(id)) {
+        return res.status(400).json({ message: "Invalid school ID format" });
+      }
+
       const user = await User.findById(req.user.id);
       if (!user) {
         return res.status(404).json({ message: "User account not found" });
       }
 
-      // Verify school existence
       const school = await School.findById(id);
       if (!school) {
         return res.status(404).json({ message: "School not found" });
       }
 
-      // Ensure only the school owner can update the school
       if (school.userId.toString() !== req.user.id) {
         return res.status(403).json({ message: "Not authorized to update this school" });
       }
 
-      let updates = { ...req.body };
-
-      // File upload handler
-      if (req.files) {
-        const uploadFile = async (file) => {
-          try {
-            const result = await cloudinary.uploader.upload(file.tempFilePath, {
-              folder: "schools",
-            });
-            return result.secure_url;
-          } catch (error) {
-            console.error("Cloudinary Upload Error:", error);
-            throw new Error("File upload failed");
-          }
-        };
-
-        const fileKeys = Object.keys(req.files);
-        for (const key of fileKeys) {
-          updates[`pictures.${key}`] = await uploadFile(req.files[key]);
+      const updates = {};
+        for (const key in req.body) {
+            if (req.body[key] !== undefined && req.body[key] !== "") {
+                updates[key] = req.body[key];
+            }
         }
+
+
+      
+    const uploadFile = async (file) => {
+      const result = await cloudinary.uploader.upload(file.tempFilePath, {
+        folder: "schools",
+      });
+      return result.secure_url;
+    };
+
+    if (req.files) {
+      if (req.files.picture) {
+        updates.picture = await uploadFile(req.files.picture);
       }
-
-      // Parse JSON fields if provided
-      try {
-        if (req.body.schoolFees) {
-          updates.schoolFees = JSON.parse(req.body.schoolFees);
-        }
-        if (req.body.jobVacancies) {
-          updates.jobVacancies = JSON.parse(req.body.jobVacancies);
-        }
-      } catch (error) {
-        return res.status(400).json({ message: "Invalid JSON format in request body" });
+      if (req.files.schoolPicture) {
+        updates.schoolPicture = await uploadFile(req.files.schoolPicture);
       }
-
-      // Update school details
-      const updatedSchool = await School.findByIdAndUpdate(id, updates, { new: true });
-
-      if (!updatedSchool) {
-        return res.status(500).json({ message: "Failed to update school" });
+      if (req.files.coverPicture) {
+        updates.coverPicture = await uploadFile(req.files.coverPicture);
       }
+      if (req.files.picture1) {
+        updates.picture1 = await uploadFile(req.files.picture1);
+      }
+      if (req.files.picture2) {
+        updates.picture2 = await uploadFile(req.files.picture2);
+      }
+      if (req.files.picture3) {
+        updates.picture3 = await uploadFile(req.files.picture3);
+      }
+      if (req.files.picture4) {
+        updates.picture4 = await uploadFile(req.files.picture4);
+      }
+      if (req.files.vcpicture) {
+        updates.vcpicture = await uploadFile(req.files.vcpicture);
+      }
+    }
 
+      
+
+     
+
+      console.log("Updates to be made:", updates);
+
+      
+    // Update the school
+    const updatedStore = await Store.findByIdAndUpdate(
+      id,
+      { $set: updates }, // Only update provided fields
+      { new: true, runValidators: true }
+  );
+
+    if (!updatedSchool) {
+      res.status(500);
+      throw new Error("Failed to update school.");
+    }
+      console.log("School data updated:", updatedSchool);
       res.status(200).json({
         message: "School updated successfully",
         updatedSchool,
@@ -234,8 +185,6 @@ schoolrouter.put(
     }
   }
 );
-
-
 
 
 
@@ -293,29 +242,32 @@ schoolrouter.post("/:id/shares", async(req, res) => {
 //view more count
 //route to increment click count
 
-schoolrouter.post("/:id/click", async(req, res) => {
-    try {
-        const { id } = req.params;
-        const school = await School.findByIdAndUpdate(
-          id,
-          { $inc: { clicks: 1 } },
-          { new: true }
-        );
-    
-        if (!school) {
-          return res.status(404).json({ message: "School not found" });
-        }
-    
-        res
-          .status(200)
-          .json({ message: "Click count updated", clicks: school.clicks });
-      } catch (error) {
-        console.error(error);
-        res.status(500).json({ message: "Server error" });
-      }
-})
+schoolrouter.post("/:slug/click", async (req, res) => {
+  try {
+    const { slug } = req.params; 
 
-//get the click count for a specific school
+
+    const school = await School.findOneAndUpdate(
+      { slug: slug }, 
+      { $inc: { clicks: 1 } }, 
+      { new: true } 
+    );
+
+    if (!school) {
+      return res.status(404).json({ message: "School not found" });
+    }
+
+    res.status(200).json({
+      message: "Click count updated",
+      clicks: school.clicks
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Server error" });
+  }
+});
+
+
 schoolrouter.get("/get-clicks/:id", async(req, res) => {
     try {
         const { id } = req.params;
@@ -346,7 +298,39 @@ schoolrouter.get("/get-clicks", async (req, res) => {
       res.status(500).json({ message: "Server error" });
     }
   });
+
+  //add comment
+schoolrouter.post("/:id/comments", async (req, res) => {
+  const { name, text } = req.body;
+  try {
+    const school = await School.findById(req.params.id);
+    if (!school) {
+      return res.status(404).json({ message: "School not found" });
+    }
+    const newComment = { name, text };
+    school.comments.push(newComment);
+    await school.save();
+    res.status(201).json({ comment: newComment });
+  } catch (error) {
+    res.status(500).json({ message: "Server error" });
+  }
+});
+
+//get a single school
+schoolrouter.get("/aschool/:slug", async(req, res) => {
+  try{
+    const school = await School.findOne({slug:req.params.slug})
+    if(!school){
+      console.log("school not found")
+      return res.status(404).json({message: "school not found"})
   
+    }
+    return res.status(200).json(school)
+  }catch{
+    console.error(error);
+    res.status(500).json({ success: false, message: "Something went wrong" });
+  }
+})
 
 
   //countSchools
@@ -376,7 +360,19 @@ schoolrouter.get("/countSchools", async (req, res) => {
       res.status(500).json({ message: error.message });
     }
   });
-  
+
+//count teachers in schools
+schoolrouter.get("/countTeacher", async (req, res) => {
+  try {
+    const teacherCount = await SchoolUsers.countDocuments({ role: "teacher" }); 
+    console.log(teacherCount)
+    return res.status(200).json({ count: teacherCount });
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({ message: "An error occurred with the server" });
+  }
+});
+
 
 
   //comparison

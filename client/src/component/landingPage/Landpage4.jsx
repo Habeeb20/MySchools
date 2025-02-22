@@ -31,12 +31,12 @@ const Landpage4 = () => {
             <div className="absolute inset-0 bg-black opacity-60"></div>
             <div className="relative text-center text-white p-5">
               <h3 className="text-2xl md:text-4xl font-bold mb-4">Enjoy being a student more with our e-student ID card benefits</h3>
-              <p className="text-base md:text-lg mb-6">Lorem ipsum dolor sit amet consectetur. Et rhoncus nunc dictum massa.</p>
+              <p className="text-base md:text-lg mb-6">Being a student with a student ID card will create alot of benenfits for you.</p>
               <div className="flex flex-wrap gap-2 justify-center">
-                <button className="bg-gray-700 hover:bg-gray-600 text-white py-2 px-4 rounded-md">eJobs</button>
+                {/* <button className="bg-gray-700 hover:bg-gray-600 text-white py-2 px-4 rounded-md">eJobs</button>
                 <button className="bg-gray-700 hover:bg-gray-600 text-white py-2 px-4 rounded-md">Buy</button>
                 <button className="bg-gray-700 hover:bg-gray-600 text-white py-2 px-4 rounded-md">Loans</button>
-                <button className="bg-gray-700 hover:bg-gray-600 text-white py-2 px-4 rounded-md">Ride</button>
+                <button className="bg-gray-700 hover:bg-gray-600 text-white py-2 px-4 rounded-md">Ride</button> */}
               </div>
             </div>
           </div>

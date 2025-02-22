@@ -37,11 +37,7 @@ const Navbar = () => {
                 schools
               </Link>
             </li>
-            <li>
-              <Link to="https://dbd.eschoolconnect.ng/" className="text-white hover:text-yellow-400 transition duration-300">
-                sch mang
-              </Link>
-            </li>
+         
             <li>
               <Link to="/admission" className="text-white hover:text-yellow-400 transition duration-300">
                 Admission
