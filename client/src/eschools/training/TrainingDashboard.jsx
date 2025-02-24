@@ -1,24 +1,28 @@
 import { useEffect, useState } from "react";
 import { FaBars, FaTimes } from "react-icons/fa";
 import axios from "axios";
+import { PieChart, Pie, Cell, Tooltip, BarChart, Bar, XAxis, YAxis, ResponsiveContainer, Legend } from "recharts";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
-const StoreDashboard = () => {
+import SlidingText from "./SlidingText";
+const TrainingDashboard = () => {
   const [isOpen, setIsOpen] = useState(false);
   const navigate = useNavigate()
   const [activeSection, setActiveSection] = useState("Profile");
   const [userData, setUserData] = useState([]);
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
+  const [storeData, setStoreData] = useState({});
   const [getMyStore, setGetMyStore] = useState("")
   const [storeNameModal, setStoreNameModal] = useState(false)
   const [storeProfileModal, setStoreProfileModal] = useState(false)
-  const [storeName, setStoreName] = useState([])
+  const [trainingName, setTrainingName] = useState([])
   const [successMessage,setSuccessMessage] = useState("")
   const [userId, setUserId] = useState('')
   const [loading,setLoading] = useState(false)
+  const COLORS = ["#FF6384", "#36A2EB", "#FFCE56"];
   const [userProfile, setUserProfile] = useState({
-     
+        trainingName:'',
         phone:'',
         state:'',
         LGA:'',
@@ -60,7 +64,7 @@ useEffect(() => {
         }
       try {
       
-        const response = await axios.get(`${import.meta.env.VITE_API_S}/dashboard`, {
+        const response = await axios.get(`${import.meta.env.VITE_API_TR}/dashboard`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -85,15 +89,15 @@ useEffect(() => {
       const token = localStorage.getItem("token");
 
       await axios.post(
-        `${import.meta.env.VITE_API_S}/poststoredata`,
-        { storeName },
+        `${import.meta.env.VITE_API_TR}/posttrainingdata`,
+        { trainingName },
         { headers: { Authorization: `Bearer ${token}` } }
       );
 
-      setSuccessMessage("store name saved successfully!");
+      setSuccessMessage("training  centre name saved successfully!");
 
       setTimeout(() => {
-        navigate("/storedashboard");
+        navigate("/trainingdashboard");
       });
     } catch (err) {
       console.log(err);
@@ -104,17 +108,19 @@ useEffect(() => {
   };
 
   //get my store details
+
   const getMyStoreData = async () => {
     try {
       const token = localStorage.getItem("token");
-      const response = await axios.get(`${import.meta.env.VITE_API_S}/getstoredata`, {
+      const response = await axios.get(`${import.meta.env.VITE_API_TR}/gettrainingdata`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
       });
       setGetMyStore(response.data);
       setUserId(response.data._id);
-      console.log(response.data);
+      console.log("your data!!",response.data);
+      console.log("id",response.data._id);
     } catch (error) {
       console.log(error);
       setError(error?.response?.data?.message);
@@ -149,6 +155,8 @@ useEffect(() => {
   }
 
 
+  
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     console.log(`Changing ${name} to ${value}`);
@@ -164,7 +172,7 @@ useEffect(() => {
     try {
       const token = localStorage.getItem('token');
       await axios.put(
-        `${import.meta.env.VITE_API_S}/${userId}`,
+        `${import.meta.env.VITE_API_TR}/${userId}`,
         userProfile,
         {
           headers: { Authorization: `Bearer ${token}` },
@@ -205,6 +213,14 @@ useEffect(() => {
   };
 
 
+  const { comments = 0, shares = 0, clicks = 0 } = storeData;
+
+  const chartData = [
+    { name: "Comments", value: comments },
+    { name: "Shares", value: shares },
+    { name: "Clicks", value: clicks },
+  ];
+
 
   
 
@@ -212,7 +228,7 @@ useEffect(() => {
     Profile: (
       <div>
         <h2 className="text-xl font-semibold text-black">{userData.email}</h2>
-        <p className="text-black">Lead Graphic Designer with a passion for digital art.</p>
+       
       </div>
     ),
     Feed: (
@@ -258,7 +274,7 @@ useEffect(() => {
                 onClick={handleOpenStoreNameModal}
                 className="mt-6 py-3 px-6 bg-green-600 text-white rounded-lg hover:bg-green-500 w-15"
               >
-                Add store Name
+                Add tutorial center Name
               </button>
               <button
                 onClick={handleOpenStoreProfileModal}
@@ -270,7 +286,7 @@ useEffect(() => {
               <div className="fixed inset-0 flex items-center justify-center bg-gray-900 bg-opacity-50 px-4">
                 <div className="bg-white rounded-lg shadow-lg p-6 w-full max-w-md">
                   <h2 className="text-xl font-semibold text-gray-800 text-center mb-4">
-                    Welcome! Please Enter Your Store Name
+                    Welcome! Please Enter Your Tutorial center  Name
                   </h2>
 
                   {successMessage && (
@@ -282,10 +298,10 @@ useEffect(() => {
                   <form onSubmit={SubmitStoreName} className="space-y-4">
                     <input
                       type="text"
-                      value={storeName}
-                      onChange={(e) => setStoreName(e.target.value)}
+                      value={trainingName}
+                      onChange={(e) => setTrainingName(e.target.value)}
                       required
-                      placeholder="Enter School Name"
+                      placeholder="Enter training center Name"
                       className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
                     />
 
@@ -377,7 +393,7 @@ useEffect(() => {
 
               <div className="flex flex-col">
                 <label className="block text-sm font-medium text-gray-600 mb-1">
-                 category(market or store)
+                 category(private or government owned)
                 </label>
                 <input
                   type="text"
@@ -545,7 +561,7 @@ useEffect(() => {
       <div className="bg-gray-100 rounded-lg shadow-md p-4 mb-6 w-full text-center">
  
     <p className="text-lg text-gray-800 mb-2">
-      <span className="font-bold">Store Name:</span> {getMyStore.storeName}
+      <span className="font-bold">Training center Name:</span> {getMyStore.trainingName}
     </p>
     <p className="text-lg text-gray-800 mb-2">
       <span className="font-bold">Email:</span> {userData.email}
@@ -588,7 +604,7 @@ useEffect(() => {
           isOpen ? "translate-x-0" : "-translate-x-full"
         } transition-transform duration-300 md:translate-x-0 md:w-64`}
       >
-        <h2 className="text-2xl font-bold p-4">Store Dashboard</h2>
+        <h2 className="text-2xl font-bold p-4">Training center Dashboard</h2>
         <ul className="space-y-4 px-4">
           {menuItems.map((item, index) => (
             <li
@@ -624,8 +640,9 @@ useEffect(() => {
               className="w-24 h-24 rounded-full border-4 border-black"
             />
             <div>
+            <SlidingText />
               <h1 className="text-2xl font-bold text-black">{userData.email}</h1>
-              <p className="text-black">Store Name:  {getMyStore.storeName}</p>
+              <p className="text-black">Tutorial center Name:  {getMyStore.trainingName}</p>
             </div>
           </div>
         </div>
@@ -637,4 +654,4 @@ useEffect(() => {
   );
 };
 
-export default StoreDashboard;
+export default TrainingDashboard;

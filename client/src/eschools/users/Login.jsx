@@ -1,6 +1,6 @@
 import { useState } from "react";
 import axios from "axios";
-import  toast  from "react-hot-toast";
+import toast from "react-hot-toast";
 import { Link, useNavigate } from "react-router-dom";
 import im from "../../assets/eschools.png";
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
@@ -24,8 +24,7 @@ const Login = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
-    
-   
+
     if (!formData.role) {
       return toast.error("You haven't selected a role");
     }
@@ -40,7 +39,7 @@ const Login = () => {
         }
       );
 
-      const token = response.data.token; 
+      const token = response.data.token;
       localStorage.setItem("token", token);
       toast.success("Login successful!");
 
@@ -55,16 +54,29 @@ const Login = () => {
         case "tutorial-center":
           navigate("/tutorialdashboard");
           break;
-          case "training-center":
-            navigate("/trainingdashboard");
-            break;
-            case "exam-board":
-              navigate("/examdashboard");
-              break;
+        case "training-center":
+          navigate("/trainingdashboard");
+          break;
+        case "exam-board":
+          navigate("/examdashboard");
+          break;
+        case "bookshop-owner":
+          navigate("/bookshopdashboard");
+          break;
+        case "teacher":
+          navigate("/teacherdashboard");
+          break;
+        case "jobseeker":
+          navigate("/jobseekerdashboard");
+          break;
+        case "jobemployer":
+          navigate("/employerdashboard");
+          break;
         default:
           navigate("/");
       }
     } catch (err) {
+      navigate("/login");
       console.error(err);
       toast.error("Login failed");
       setError(err.response?.data?.message || "login failed");
@@ -106,6 +118,10 @@ const Login = () => {
           <option value="tutorial-center">tutorial center</option>
           <option value="training-center">training center</option>
           <option value="exam-board">exam-board</option>
+          <option value="bookshop-owner">bookshop-owner</option>
+          {/* <option value="teacher">teacher</option> */}
+          <option value="jobseeker">jobseeker</option>
+          <option value="jobemployer">jobemployer</option>
         </select>
 
         <input

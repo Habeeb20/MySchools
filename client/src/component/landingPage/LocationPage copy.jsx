@@ -10,7 +10,7 @@ const LocationPage = () => {
 
   useEffect(() => {
     axios
-      .get(`${import.meta.env.VITE_API}/schools`) 
+      .get(`${import.meta.env.VITE_API_3}`) 
       .then((response) => { 
        console.log("response", response.data)
         if (response.data && Array.isArray(response.data)) {
@@ -68,7 +68,7 @@ const LocationPage = () => {
             <p className="text-gray-600">phone no:{school.phone}</p>
             <p className="text-gray-600">Address:{school.location}</p>
             <p className="text-gray-600">category{school.category}</p>
-            <Link to={`/schooldetail/${school._id}`}>
+            <Link to={`/schools/${school.slug}`}>
                 <button className="bg-green-600 text-white px-4 py-2 rounded-lg mb-4 mx-4">
                   View More
                 </button>

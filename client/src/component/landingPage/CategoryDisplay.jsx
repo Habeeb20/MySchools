@@ -15,15 +15,15 @@ const CategoryDisplay = () => {
     const fetchUrl = () => {
       switch (category) {
         case "teachers":
-          return `${import.meta.env.VITE_APIT}/${id}`;
+          return `${import.meta.env.VITE_API_T}/${id}`;
         case "schools":
-          return `${import.meta.env.VITE_API}/schools/${id}`;
+          return `${import.meta.env.VITE_API_3}/${id}`;
         case "exams":
-          return `${import.meta.env.VITE_APIE}/${id}`;
+          return `${import.meta.env.VITE_API_E}/${id}`;
         case "bookshops":
-          return `${import.meta.env.VITE_APIB}/${id}`;
+          return `${import.meta.env.VITE_API_B}/${id}`;
         case "tutorials":
-          return `${import.meta.env.VITE_APITU}/${id}`;
+          return `${import.meta.env.VITE_API_TU}/${id}`;
         default:
           return null;
       }

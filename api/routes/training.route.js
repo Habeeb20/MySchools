@@ -44,7 +44,7 @@ trainingrouter.post("/posttrainingdata", verifyToken, async(req, res) => {
   
         const store = new Training({
             userId,
-            storeName,
+            trainingName,
           });
 
           await store.save();
@@ -67,7 +67,7 @@ trainingrouter.get("/gettrainingdata", verifyToken, async(req, res) => {
         const store = await Training.findOne({ userId: req.user.id });
         if (!store) {
             console.log("Store not found for user:", req.user.id);
-            return res.status(404).json({ message: "Store not found" });
+            return res.status(404)
         }
         return res.status(200).json( store );
     } catch (error) {
@@ -254,7 +254,7 @@ trainingrouter.get("/get-clicks/:slug", async(req, res) => {
     try {
         const {slug} = req.params;
 
-        const store = await Training.findOne(slug)
+        const store = await Training.findOne({slug:req.prams.slug})
 
         if (!store) {
             return res.status(404).json({ message: "training not found" });
@@ -270,7 +270,7 @@ trainingrouter.get("/get-clicks/:slug", async(req, res) => {
 
 trainingrouter.get("/get-clicks", async (req, res) => {
     try {
-      const store = await Training.find({}, "exam clicks"); // Fetch school name and clicks only
+      const store = await Training.find({}, "exam clicks"); 
   
       res.status(200).json(store);
     } catch (error) {
@@ -280,7 +280,7 @@ trainingrouter.get("/get-clicks", async (req, res) => {
   });
 
   //get a store slug
-trainingrouter.get("/aStore/:slug", async (req, res) => {
+trainingrouter.get("/atraining/:slug", async (req, res) => {
   
     try {
       const { slug } = req.params.slug;
@@ -334,7 +334,7 @@ trainingrouter.post("/:slug/comments", async (req, res) => {
 
 
 //count stores
-trainingrouter.get("/countstore", async (req, res) => {
+trainingrouter.get("/counttraining", async (req, res) => {
     try {
         let { locations } = req.query;
 
@@ -371,7 +371,7 @@ trainingrouter.get('/location/counts', async (req, res) => {
     try {
   
       const states = [
-        'Abia', 'Adamawa', 'Akwa Ibom', 'Anambra', 'Bauchi', 'Bayelsa', 'Benue', 'Borno',
+        'Abia', 'Abuja', 'Adamawa', 'Akwa Ibom', 'Anambra', 'Bauchi', 'Bayelsa', 'Benue', 'Borno',
         'Cross River', 'Delta', 'Ebonyi', 'Edo', 'Ekiti', 'Enugu', 'Gombe', 'Imo', 'Jigawa',
         'Kaduna', 'Kano', 'Katsina', 'Kebbi', 'Kogi', 'Kwara', 'Lagos', 'Nasarawa', 'Niger',
         'Ogun', 'Ondo', 'Osun', 'Oyo', 'Plateau', 'Rivers', 'Sokoto', 'Taraba', 'Yobe', 'Zamfara'
@@ -381,7 +381,7 @@ trainingrouter.get('/location/counts', async (req, res) => {
       const stateCounts = {};
   
       for (const state of states) {
-        const count = await Training.countDocuments({ state: state });
+        const count = await Training.countDocuments({ state: { $regex: new RegExp(`^${state}$`, 'i') } });
         stateCounts[state] = count;
       }
   

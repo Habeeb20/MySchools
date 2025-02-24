@@ -71,19 +71,6 @@ userRouter.post("/signup", async(req, res) => {
     
     await sendOTPEmail(user.email, verificationToken);
 
-    const userData = {
-        name: email.split("@")[0],
-        email,
-        password,
-        confirmPassword:password,
-        role
-    }
-
-    await axios.post("https://api.edirect.ng/api/register", userData, {
-        headers: { "Content-Type": "application/json" }
-    });
-
-
     return res.status(201).json({
         message: "user registered successfully, check your email to get verify your account",
         user: { ...user._doc, password: undefined },})

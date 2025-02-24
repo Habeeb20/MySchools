@@ -199,11 +199,11 @@ schoolrouter.put(
 
 
 //get share counts
-schoolrouter.get("/:id/shares", async(req, res) => {
+schoolrouter.get("/:slug/shares", async(req, res) => {
     try {
-        const { id } = req.params;
+      const { slug } = req.params;
     
-        const school = await School.findById(id);
+        const school = await School.findOne({slug});
     
         if (!school) {
           return res.status(404).json({ message: "School not found" });
@@ -218,14 +218,14 @@ schoolrouter.get("/:id/shares", async(req, res) => {
 
 //increment share count
 
-schoolrouter.post("/:id/shares", async(req, res) => {
+schoolrouter.post("/:slug/shares", async(req, res) => {
     try {
-        const { id } = req.params;
+      const { slug } = req.params;
       
-        const school = await School.findByIdAndUpdate(
-          id,
-          { $inc: { shares: 1 } }, 
-          { new: true } 
+        const school = await School.findOneAndUpdate(
+          { slug }, 
+            { $inc: { shares: 1 } },
+            { new: true }
         );
       
         if (!school) {
@@ -268,11 +268,11 @@ schoolrouter.post("/:slug/click", async (req, res) => {
 });
 
 
-schoolrouter.get("/get-clicks/:id", async(req, res) => {
+schoolrouter.get("/get-clicks/:slug", async(req, res) => {
     try {
-        const { id } = req.params;
+      const {slug} = req.params;
     
-        const school = await School.findById(id);
+        const school = await School.findOne(slug);
     
         if (!school) {
           return res.status(404).json({ message: "School not found" });
@@ -300,10 +300,10 @@ schoolrouter.get("/get-clicks", async (req, res) => {
   });
 
   //add comment
-schoolrouter.post("/:id/comments", async (req, res) => {
+schoolrouter.post("/:slug/comments", async (req, res) => {
   const { name, text } = req.body;
   try {
-    const school = await School.findById(req.params.id);
+    const school = await School.findOne({ slug: req.params.slug });
     if (!school) {
       return res.status(404).json({ message: "School not found" });
     }
@@ -450,7 +450,7 @@ schoolrouter.get("/comparison", async (req, res) => {
     try {
   
       const states = [
-        'Abia', 'Adamawa', 'Akwa Ibom', 'Anambra', 'Bauchi', 'Bayelsa', 'Benue', 'Borno',
+        'Abia', 'Abuja', 'Adamawa', 'Akwa Ibom', 'Anambra', 'Bauchi', 'Bayelsa', 'Benue', 'Borno',
         'Cross River', 'Delta', 'Ebonyi', 'Edo', 'Ekiti', 'Enugu', 'Gombe', 'Imo', 'Jigawa',
         'Kaduna', 'Kano', 'Katsina', 'Kebbi', 'Kogi', 'Kwara', 'Lagos', 'Nasarawa', 'Niger',
         'Ogun', 'Ondo', 'Osun', 'Oyo', 'Plateau', 'Rivers', 'Sokoto', 'Taraba', 'Yobe', 'Zamfara'
@@ -460,7 +460,7 @@ schoolrouter.get("/comparison", async (req, res) => {
       const stateCounts = {};
   
       for (const state of states) {
-        const count = await School.countDocuments({ state: state });
+        const count = await School.countDocuments({ state: { $regex: new RegExp(`^${state}$`, 'i') } });
         stateCounts[state] = count;
       }
   
@@ -470,6 +470,19 @@ schoolrouter.get("/comparison", async (req, res) => {
     } catch (error) {
       console.error('Error fetching state counts:', error);
       res.status(500).json({ error: 'Internal Server Error' });
+    }
+  });
+
+
+  schoolrouter.get("/jobs", async (req, res) => {
+    try {
+      const schoolsWithJobs = await School.find({ jobVacancy: { $ne: null } }) // Fetch schools that have job vacancies
+        .select("schoolName location jobVacancy NumberOfVacancy position1 salary1 qualification1 position2 salary2 qualification2 position3 salary3 qualification3")
+        .exec();
+  
+      res.status(200).json(schoolsWithJobs);
+    } catch (error) {
+      res.status(500).json({ message: "Error fetching jobs", error });
     }
   });
 

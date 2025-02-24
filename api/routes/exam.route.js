@@ -13,7 +13,7 @@ const examrouter = express.Router()
 examrouter.get("/dashboard", verifyToken, async(req, res) => {
     const userId = req.user.id;
 
-    const user = await Exam.findById(userId)
+    const user = await User.findById(userId)
     if(!user){
         return res.status(404).json({message: "not found"})
 
@@ -65,7 +65,7 @@ examrouter.get("/getexamdata", verifyToken, async(req, res) => {
         const exam = await Exam.findOne({ userId: req.user.id });
         if (!exam) {
             console.log("Store not found for user:", req.user.id);
-            return res.status(404).json({ message: "Store not found" });
+            return res.status(404).json();
         }
         return res.status(200).json( exam );
     } catch (error) {
@@ -76,7 +76,7 @@ examrouter.get("/getexamdata", verifyToken, async(req, res) => {
 
 
 //get all exam bodies
-examrouter.get("/getallexam", async(req, res) => {
+examrouter.get("/getallexams", async(req, res) => {
     try {
         const exam = await Exam.find({})
         return res.status(200).json(exam)
@@ -256,7 +256,7 @@ examrouter.get("/get-clicks/:slug", async(req, res) => {
     try {
         const {slug} = req.params;
 
-        const store = await Exam.findOne(slug)
+        const store = await Exam.findOne({slug:req.params.slug})
 
         if (!store) {
             return res.status(404).json({ message: "exam not found" });
@@ -281,8 +281,8 @@ examrouter.get("/get-clicks", async (req, res) => {
     }
   });
 
-  //get a store slug
-examrouter.get("/aStore/:slug", async (req, res) => {
+  //get a exam slug
+examrouter.get("/anexam/:slug", async (req, res) => {
   
     try {
       const { slug } = req.params.slug;
@@ -336,7 +336,7 @@ examrouter.post("/:slug/comments", async (req, res) => {
 
 
 //count stores
-examrouter.get("/countstore", async (req, res) => {
+examrouter.get("/countexam", async (req, res) => {
     try {
         let { locations } = req.query;
 
@@ -376,14 +376,14 @@ examrouter.get('/location/counts', async (req, res) => {
         'Abia', 'Adamawa', 'Akwa Ibom', 'Anambra', 'Bauchi', 'Bayelsa', 'Benue', 'Borno',
         'Cross River', 'Delta', 'Ebonyi', 'Edo', 'Ekiti', 'Enugu', 'Gombe', 'Imo', 'Jigawa',
         'Kaduna', 'Kano', 'Katsina', 'Kebbi', 'Kogi', 'Kwara', 'Lagos', 'Nasarawa', 'Niger',
-        'Ogun', 'Ondo', 'Osun', 'Oyo', 'Plateau', 'Rivers', 'Sokoto', 'Taraba', 'Yobe', 'Zamfara'
+        'Ogun', 'Ondo', 'Osun', 'Oyo', 'Plateau', 'Rivers', 'Sokoto', 'Taraba', 'Yobe', 'Zamfara','Abuja'
       ];
   
   
       const stateCounts = {};
   
       for (const state of states) {
-        const count = await Exam.countDocuments({ state: state });
+        const count = await Exam.countDocuments({ state: { $regex: new RegExp(`^${state}$`, 'i') } });
         stateCounts[state] = count;
       }
   

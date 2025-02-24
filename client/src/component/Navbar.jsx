@@ -10,7 +10,7 @@ const Navbar = () => {
   };
 
   return (
-    <nav className="bg-dark-green p-4 fixed top-0 left-0 right-0 z-50">
+    <nav className="bg-dark-green p-4 fixed mb-2 top-0 left-0 right-0 z-50">
       <div className="max-w-screen-xl mx-auto flex justify-between items-center">
         {/* Logo or Brand Name */}
         <Link to="/" className="text-white text-2xl font-bold">
@@ -43,13 +43,13 @@ const Navbar = () => {
                 Admission
               </Link>
             </li>
-            <li>
+            {/* <li>
               <Link to="/teacherhomepage" className="text-white hover:text-yellow-400 transition duration-300">
                 Teacher
               </Link>
-            </li>
+            </li> */}
             <li>
-              <Link to="/joblandingpage" className="text-white hover:text-yellow-400 transition duration-300">
+              <Link to="/alljobs" className="text-white hover:text-yellow-400 transition duration-300">
                 Ejobs
               </Link>
             </li>
@@ -58,21 +58,21 @@ const Navbar = () => {
                 Training
               </Link>
             </li>
-            <li>
+            {/* <li>
               <Link to="/tutorialhomepage" className="text-white hover:text-yellow-400 transition duration-300">
                 Tutorial
               </Link>
-            </li>
+            </li> */}
             <li>
               <Link to="/examhomepage" className="text-white hover:text-yellow-400 transition duration-300">
                 exam
               </Link>
             </li>
-            <li>
+            {/* <li>
               <Link to="/bookshophomepage" className="text-white hover:text-yellow-400 transition duration-300">
                 Ebook
               </Link>
-            </li>
+            </li> */}
             <li>
               <Link to="/comparison" className="text-white hover:text-yellow-400 transition duration-300">
                 comparison

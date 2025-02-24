@@ -42,7 +42,7 @@ const SchoolsDetails = () => {
         setError("Failed to load profile, please try again later");
       })
       .finally(() => setLoading(false));
-  }, [id]);
+  }, [slug]);
 
   const handleMapClick = (address) => {
     // Prompt for user's location
@@ -63,7 +63,7 @@ const SchoolsDetails = () => {
     };
 
     fetchClickCount();
-  }, [id]);
+  }, [slug]);
 
   useEffect(() => {
     axios
@@ -75,7 +75,7 @@ const SchoolsDetails = () => {
       .catch((error) => {
         console.error("Failed to fetch share count:", error);
       });
-  }, [id]);
+  }, [slug]);
 
   const handleShareClick = async () => {
     try {

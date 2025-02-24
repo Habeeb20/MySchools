@@ -5,7 +5,7 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { FaCity, FaMapMarkerAlt, FaBuilding, FaLandmark } from "react-icons/fa";
 
-const CountStores = () => {
+const CountExams = () => {
   const navigate = useNavigate();
   const [visibleCount, setVisibleCount] = useState(4);
   const [stateCounts, setStateCounts] = useState({
@@ -38,7 +38,7 @@ const CountStores = () => {
     "Ogun": 0,
     "Ondo": 0,
     "Osun": 0,
-    "oyo": 0,
+    "Oyo": 0,
     "Plateau": 0,
     "Rivers": 0,
     "Sokoto": 0,
@@ -107,7 +107,7 @@ const CountStores = () => {
     const fetchLocationCounts = async () => {
       try {
         const response = await axios.get(
-          `${import.meta.env.VITE_API_S}/location/counts`
+          `${import.meta.env.VITE_API_E}/location/counts`
         );
     
         setStateCounts(response.data);
@@ -135,9 +135,9 @@ const CountStores = () => {
               <div className="text-green-600 text-3xl mb-2">
                   <i className="fas fa-school"></i> 
                 </div>
-            <p className="text-center text-gray-800 font-semibold">stores in {state.name}</p>
+            <p className="text-center text-gray-800 font-semibold">Exam bodies in {state.name}</p>
             <h3   className="text-2xl font-bold">{stateCounts[state.name]}</h3>
-            <h3 className="text-lg font-semibold">{`stores in ${state.name}: ${stateCounts[state.name]}`}</h3>
+            <h3 className="text-lg font-semibold">{`Exam bodies in ${state.name}: ${stateCounts[state.name]}`}</h3>
 
             
           </div>
@@ -165,4 +165,4 @@ const CountStores = () => {
   );
 };
 
-export default CountStores;
+export default CountExams;

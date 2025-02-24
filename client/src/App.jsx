@@ -42,6 +42,21 @@ import ChooseLogin from './eschools/schools/ChooseLogin'
 import StoreDashboard from './eschools/store/StoreDashboard'
 import StoreHomePage from './eschools/store/StoreHomePage'
 import StoreDetails from './eschools/store/StoreDetails'
+import ExamDashboard from './eschools/exam/ExamDashboard'
+import ExamHomepage from './eschools/exam/ExamHomepage'
+import ExamDetails from './eschools/exam/ExamDetails'
+import TrainingDashboard from './eschools/training/TrainingDashboard'
+import TrainingHomePage from './eschools/training/TrainingHomepage'
+import TrainingDetails from './eschools/training/TrainingDetails'
+import EmployerDashboard from './eschools/Ejobs/EmployerDashboard'
+import JobSeekerDashboard from './eschools/Ejobs/JobSeekerDashboard'
+import JobList from './eschools/Ejobs/JobList'
+import Admission from './eschools/LandingPage/Admission'
+import Comparison from './eschools/LandingPage/Comparison'
+import CategoryPage from './component/landingPage/CategoryPage'
+import CategoryDisplay from './component/landingPage/CategoryDisplay'
+import LocationPage from './component/landingPage/LocationPage copy'
+import DataInState from './component/landingPage/DataInState'
 const AppLayout = ({ children }) => {
   const location = useLocation();
 
@@ -106,6 +121,12 @@ function App() {
         <Route path="/schoolshomepage" element={<SchoolsHomePage />} />
         <Route path="/chooselogin" element={<ChooseLogin />} />
         <Route path="/schools/:slug" element={<SchoolsDetails />} />
+        <Route path="/category/:category" element={<CategoryPage />} />
+        <Route path ="/:category/:slug"  element={<CategoryDisplay />} />
+        <Route path="/state/:state" element={<LocationPage />} />
+        <Route path="/data/:location" element={<DataInState />} />
+   
+
         <Route path="/" element={<Home />} />
         <Route path="/report" element={<Report />} />
         <Route path="/request" element={<RequestForm />} />
@@ -114,6 +135,25 @@ function App() {
         <Route path="/storedashboard" element={<StoreDashboard />} />
          <Route path="/storehomepage" element={<StoreHomePage />} />
          <Route path="/store/:slug"  element={<StoreDetails />} />
+
+
+         <Route path="/examdashboard" element={<ExamDashboard />} />
+         <Route path="/examhomepage" element={<ExamHomepage />} />
+         <Route path="/exam/:slug"  element={<ExamDetails />} />
+
+
+         
+         <Route path="/trainingdashboard" element={<TrainingDashboard/>} />
+         <Route path="/traininghomepage" element={<TrainingHomePage />} />
+         <Route path="/training/:slug"  element={<TrainingDetails />} />
+
+
+         <Route path="/employerdashboard" element={<EmployerDashboard />} /> 
+         <Route path="/jobseekerdashboard" element={<JobSeekerDashboard />} />
+         <Route path="/alljobs" element={<JobList />} />
+         <Route path="/admission" element={<Admission />} />
+         <Route path="/comparison" element={<Comparison />} />
+
       </Routes>
 
 

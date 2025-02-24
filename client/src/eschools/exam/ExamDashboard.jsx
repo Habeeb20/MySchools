@@ -3,7 +3,7 @@ import { FaBars, FaTimes } from "react-icons/fa";
 import axios from "axios";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
-const StoreDashboard = () => {
+const ExamDashboard = () => {
   const [isOpen, setIsOpen] = useState(false);
   const navigate = useNavigate()
   const [activeSection, setActiveSection] = useState("Profile");
@@ -13,24 +13,30 @@ const StoreDashboard = () => {
   const [getMyStore, setGetMyStore] = useState("")
   const [storeNameModal, setStoreNameModal] = useState(false)
   const [storeProfileModal, setStoreProfileModal] = useState(false)
-  const [storeName, setStoreName] = useState([])
+  const [examBody, setExamBody] = useState([])
   const [successMessage,setSuccessMessage] = useState("")
   const [userId, setUserId] = useState('')
   const [loading,setLoading] = useState(false)
   const [userProfile, setUserProfile] = useState({
      
-        phone:'',
-        state:'',
-        LGA:'',
-        location:'',
-        category:'',
-        picture1: '',
-        picture2:'',
-        picture3: '',
-        picture4:'',
-        picture5:'',
-        picture6:'',
-        picture7:'',
+    examBody: '',
+    email: '',
+    phone: '',
+    category: '',
+    headOffice:'',
+    startDate: '',
+    endDate: '',
+    category: '',
+    state: '',
+    LGA: '',
+    location: '',
+    formPrice: '',
+    Deadline: '',
+    createdAt:'',
+    picture1: '',
+    picture2:'',
+    picture3: '',
+    picture4:'',
   })
 
 
@@ -60,7 +66,7 @@ useEffect(() => {
         }
       try {
       
-        const response = await axios.get(`${import.meta.env.VITE_API_S}/dashboard`, {
+        const response = await axios.get(`${import.meta.env.VITE_API_E}/dashboard`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -76,7 +82,7 @@ useEffect(() => {
   }, []);
 
 
-  //submit the store name
+  //submit the exam name
   
   const SubmitStoreName = async (e) => {
     e.preventDefault();
@@ -85,15 +91,15 @@ useEffect(() => {
       const token = localStorage.getItem("token");
 
       await axios.post(
-        `${import.meta.env.VITE_API_S}/poststoredata`,
-        { storeName },
+        `${import.meta.env.VITE_API_E}/postexamdata`,
+        { examBody },
         { headers: { Authorization: `Bearer ${token}` } }
       );
 
-      setSuccessMessage("store name saved successfully!");
+      setSuccessMessage("Exam body name saved successfully!");
 
       setTimeout(() => {
-        navigate("/storedashboard");
+        navigate("/examdashboard");
       });
     } catch (err) {
       console.log(err);
@@ -103,11 +109,11 @@ useEffect(() => {
     }
   };
 
-  //get my store details
+  //get my exam details
   const getMyStoreData = async () => {
     try {
       const token = localStorage.getItem("token");
-      const response = await axios.get(`${import.meta.env.VITE_API_S}/getstoredata`, {
+      const response = await axios.get(`${import.meta.env.VITE_API_E}/getexamdata`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -164,7 +170,7 @@ useEffect(() => {
     try {
       const token = localStorage.getItem('token');
       await axios.put(
-        `${import.meta.env.VITE_API_S}/${userId}`,
+        `${import.meta.env.VITE_API_E}/${userId}`,
         userProfile,
         {
           headers: { Authorization: `Bearer ${token}` },
@@ -212,7 +218,7 @@ useEffect(() => {
     Profile: (
       <div>
         <h2 className="text-xl font-semibold text-black">{userData.email}</h2>
-        <p className="text-black">Lead Graphic Designer with a passion for digital art.</p>
+
       </div>
     ),
     Feed: (
@@ -229,7 +235,7 @@ useEffect(() => {
         <h2 className="text-2xl font-bold text-gray-800 mb-4 text-center">Photo Gallery</h2>
       
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
-          {Array.from({ length: 7 }).map((_, index) => {
+          {Array.from({ length: 4 }).map((_, index) => {
             const pictureKey = `picture${index + 1}`;
             return (
               getMyStore[pictureKey] && (
@@ -258,7 +264,7 @@ useEffect(() => {
                 onClick={handleOpenStoreNameModal}
                 className="mt-6 py-3 px-6 bg-green-600 text-white rounded-lg hover:bg-green-500 w-15"
               >
-                Add store Name
+                Add Exam body Name
               </button>
               <button
                 onClick={handleOpenStoreProfileModal}
@@ -270,7 +276,7 @@ useEffect(() => {
               <div className="fixed inset-0 flex items-center justify-center bg-gray-900 bg-opacity-50 px-4">
                 <div className="bg-white rounded-lg shadow-lg p-6 w-full max-w-md">
                   <h2 className="text-xl font-semibold text-gray-800 text-center mb-4">
-                    Welcome! Please Enter Your Store Name
+                    Welcome! Please Enter Your Exam Body Name
                   </h2>
 
                   {successMessage && (
@@ -282,8 +288,8 @@ useEffect(() => {
                   <form onSubmit={SubmitStoreName} className="space-y-4">
                     <input
                       type="text"
-                      value={storeName}
-                      onChange={(e) => setStoreName(e.target.value)}
+                      value={examBody}
+                      onChange={(e) => setExamBody(e.target.value)}
                       required
                       placeholder="Enter School Name"
                       className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
@@ -346,7 +352,31 @@ useEffect(() => {
     
               {/* New input fields */}
            
-    
+              <div className="flex flex-col">
+                <label className="block text-sm font-medium text-gray-600 mb-1">
+                 Name of examination body
+                </label>
+                <input
+                  type="text"
+                  name="examBody"
+                  value={userProfile.exambody}
+                  onChange={handleChange}
+                  className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                />
+              </div>
+
+              <div className="flex flex-col">
+                <label className="block text-sm font-medium text-gray-600 mb-1">
+                 email for your exam body center
+                </label>
+                <input
+                  type="text"
+                  name="email"
+                  value={userProfile.email}
+                  onChange={handleChange}
+                  className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                />
+              </div>
            
               <div className="flex flex-col">
                 <label className="block text-sm font-medium text-gray-600 mb-1">
@@ -360,6 +390,84 @@ useEffect(() => {
                   className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
                 />
               </div>
+              <div className="flex flex-col">
+                <label className="block text-sm font-medium text-gray-600 mb-1">
+               headOffice address
+                </label>
+                <input
+                  type="text"
+                  name="headOffice"
+                  value={userProfile.headOffice}
+                  onChange={handleChange}
+                  className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                />
+              </div>
+
+              
+              <div className="flex flex-col">
+                <label className="block text-sm font-medium text-gray-600 mb-1">
+                  commencement date
+                </label>
+                <input
+                  type="date"
+                  name="startDate"
+                  value={userProfile.startDate}
+                  onChange={handleChange}
+                  className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                />
+              </div>
+
+              <div className="flex flex-col">
+                <label className="block text-sm font-medium text-gray-600 mb-1">
+                 examination ends
+                </label>
+                <input
+                  type="date"
+                  name="endDate"
+                  value={userProfile.endDate}
+                  onChange={handleChange}
+                  className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                />
+              </div>
+
+              <div className="flex flex-col">
+                <label className="block text-sm font-medium text-gray-600 mb-1">
+               amount for obtaining exam form
+                </label>
+                <input
+                  type="text"
+                  name="formPrice"
+                  value={userProfile.formPrice}
+                  onChange={handleChange}
+                  className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                />
+              </div>
+              <div className="flex flex-col">
+                <label className="block text-sm font-medium text-gray-600 mb-1">
+                 when is the deadline for obtaining a form
+                </label>
+                <input
+                  type="date"
+                  name="Deadline"
+                  value={userProfile.Deadline}
+                  onChange={handleChange}
+                  className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                />
+              </div>
+
+              <div className="flex flex-col">
+                <label className="block text-sm font-medium text-gray-600 mb-1">
+                 category(primary, secondary, univeristy or polythecnic)
+                </label>
+                <input
+                  type="text"
+                  name="category"
+                  value={userProfile.category}
+                  onChange={handleChange}
+                  className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                />
+              </div>
+
 
               <div className="flex flex-col">
                 <label className="block text-sm font-medium text-gray-600 mb-1">
@@ -375,18 +483,6 @@ useEffect(() => {
               </div>
           
 
-              <div className="flex flex-col">
-                <label className="block text-sm font-medium text-gray-600 mb-1">
-                 category(market or store)
-                </label>
-                <input
-                  type="text"
-                  name="category"
-                  value={userProfile.category || ""}
-                  onChange={handleChange}
-                  className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
-                />
-              </div>
 
 
 
@@ -451,36 +547,8 @@ useEffect(() => {
                   className="block w-full text-sm text-gray-600 file:mr-4 file:py-2 file:px-4 file:rounded file:border-0 file:bg-gray-100 file:text-gray-700"
                 />
               </div>
-              <div className="flex flex-col">
-                <label className="block text-sm font-medium text-gray-600 mb-1">
-                  Picture
-                </label>
-                <input
-                  type="file"
-                  onChange={(e) => handleFileChange(e, "picture4")}
-                  className="block w-full text-sm text-gray-600 file:mr-4 file:py-2 file:px-4 file:rounded file:border-0 file:bg-gray-100 file:text-gray-700"
-                />
-              </div>
-              <div className="flex flex-col">
-                <label className="block text-sm font-medium text-gray-600 mb-1">
-                  Picture
-                </label>
-                <input
-                  type="file"
-                  onChange={(e) => handleFileChange(e, "picture5")}
-                  className="block w-full text-sm text-gray-600 file:mr-4 file:py-2 file:px-4 file:rounded file:border-0 file:bg-gray-100 file:text-gray-700"
-                />
-              </div>
-              <div className="flex flex-col">
-                <label className="block text-sm font-medium text-gray-600 mb-1">
-                  Picture
-                </label>
-                <input
-                  type="file"
-                  onChange={(e) => handleFileChange(e, "picture6")}
-                  className="block w-full text-sm text-gray-600 file:mr-4 file:py-2 file:px-4 file:rounded file:border-0 file:bg-gray-100 file:text-gray-700"
-                />
-              </div>
+        
+       
               <div className="flex flex-col">
                 <label className="block text-sm font-medium text-gray-600 mb-1">
                   Picture
@@ -545,7 +613,7 @@ useEffect(() => {
       <div className="bg-gray-100 rounded-lg shadow-md p-4 mb-6 w-full text-center">
  
     <p className="text-lg text-gray-800 mb-2">
-      <span className="font-bold">Store Name:</span> {getMyStore.storeName}
+      <span className="font-bold">Exam body Name:</span> {getMyStore.examBody}
     </p>
     <p className="text-lg text-gray-800 mb-2">
       <span className="font-bold">Email:</span> {userData.email}
@@ -588,7 +656,7 @@ useEffect(() => {
           isOpen ? "translate-x-0" : "-translate-x-full"
         } transition-transform duration-300 md:translate-x-0 md:w-64`}
       >
-        <h2 className="text-2xl font-bold p-4">Store Dashboard</h2>
+        <h2 className="text-2xl font-bold p-4">Exam Body  Dashboard</h2>
         <ul className="space-y-4 px-4">
           {menuItems.map((item, index) => (
             <li
@@ -624,8 +692,8 @@ useEffect(() => {
               className="w-24 h-24 rounded-full border-4 border-black"
             />
             <div>
-              <h1 className="text-2xl font-bold text-black">{userData.email}</h1>
-              <p className="text-black">Store Name:  {getMyStore.storeName}</p>
+              <h1 className="text-2xl font-bold text-black">Logged In email:{userData.email}</h1>
+              <p className="text-black">Exam body Name:  {getMyStore.examBody}</p>
             </div>
           </div>
         </div>
@@ -637,4 +705,4 @@ useEffect(() => {
   );
 };
 
-export default StoreDashboard;
+export default ExamDashboard;

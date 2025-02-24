@@ -25,6 +25,11 @@ import financeRouter from "./routes/eschools/schools/financeRoute.js";
 import storerouter from "./routes/eschools/store.route.js";
 import examrouter from "./routes/exam.route.js";
 import trainingrouter from "./routes/training.route.js";
+import tutorial from "./models/Eschools/tutorial/tutorial.js";
+import tutorialrouter from "./routes/tutorial.route.js";
+import jobRouters from "./routes/ejobs/job.route.js";
+import applicantRouter from "./routes/ejobs/applicant.js";
+import messageRouter from "./routes/ejobs/messageroute.js";
 dotenv.config();
 
 
@@ -69,6 +74,12 @@ app.use("/eschools/request", requestRouter)
 app.use("/eschools/store", storerouter)
 app.use("/eschools/exam", examrouter)
 app.use("/eschools/training", trainingrouter)
+app.use("/eschools/tutorial", tutorialrouter)
+
+
+app.use("/eschools/Ejob", jobRouters)
+app.use("/eschools/applicant", applicantRouter)
+app.use("/eschools/message", messageRouter)
 
 
 

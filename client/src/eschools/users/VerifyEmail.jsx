@@ -1,10 +1,11 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import im from "../../assets/eschools.png";
 const VerifyEmail = () => {
   const [otp, setOtp] = useState(["", "", "", "", "", ""]);
   const [error, setError] = useState("");
+  const [message, setMessage] = useState("")
   const navigate = useNavigate();
 
   const handleChange = (value, index) => {
@@ -18,6 +19,10 @@ const VerifyEmail = () => {
       document.getElementById(`otp-input-${index + 1}`)?.focus();
     }
   };
+
+  useEffect(() => {
+    setMessage("registration successful and your details have been saved on E-direct")
+  }, [])
 
   // Combine OTP array to a string
   const handleSubmit = async (e) => {
@@ -44,7 +49,8 @@ const VerifyEmail = () => {
         </div>
 
         <div className="bg-white shadow-md rounded px-8 pt-1 pb-10 mt-1">
-          <h2 className="text-2xl font-semibold mb-6 text-center">Signin</h2>
+          <h2 className="text-2xl font-semibold mb-6 text-center">Get Verified</h2>
+          {message && <p className="text-green-500">{message}</p>}
           {error && <p className="text-red-500">{error}</p>}
           <form onSubmit={handleSubmit} className="space-y-4">
             <h4> input the code being sent to your registered email</h4>

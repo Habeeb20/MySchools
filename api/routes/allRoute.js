@@ -1,12 +1,16 @@
 import express from "express";
 import mongoose from "mongoose";
-import School from "../models/school.js";
-import Teachers from "../models/teacher.js"
-import Training from "../models/training.js";
-import Exam from "../models/exam.js";
-import Bookshop from "../models/bookshop.js";
-import Tutorial from "../models/tutorial.js";
-import Store from "../models/store.js";
+import School from "../models/Eschools/schools/school.schema.js";
+import Training from "../models/Eschools/training/trainingSchema.js";
+import Exam from "../models/Eschools/exam/examSchema.js";
+import Store from "../models/Eschools/store/storeSchema.js";
+import Tutorial from "../models/Eschools/tutorial/tutorial.js";
+// import Teachers from "../models/teacher.js"
+
+
+// import Bookshop from "../models/bookshop.js";
+
+
 const router = express.Router()
 
 
@@ -21,7 +25,9 @@ router.get("/details/:location", async (req, res) => {
     const exam = await Exam.find({ state: location });
     const bookshop = await Bookshop.find({ state: location });
     const store = await Store.find({ state: location });
-    const tutorial = await Tutorial.find({ state: location });
+    const tutorial = await Tutorial.find({ state: location }
+
+    );
 
     res.json({
      schools,

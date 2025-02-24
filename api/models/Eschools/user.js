@@ -14,7 +14,7 @@ const userSchema = new mongoose.Schema(
         role:{
             type:String,
             required:true,
-            enum:["school-administrator", "store-owner", "tutorial-center"]
+            enum:["school-administrator", "store-owner", "tutorial-center", "exam-board", "training-center", "bookshop-owner", "teacher", "jobseeker", "jobemployer"]
           },
           isVerified: {type: Boolean,default: false},
           status: { type: String, enum: ['active', 'blocked', 'pending'], default: 'pending' },

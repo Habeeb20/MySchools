@@ -43,9 +43,9 @@ const SearchByCategory = () => {
         const schoolResponse = await axios.get(`${import.meta.env.VITE_API_3}/category/counts`);
         // Fetch teacher count
         const teacherResponse = await axios.get(`${import.meta.env.VITE_API_3}/countTeacher`);
-        const examResponse = await axios.get(`${import.meta.env.VITE_APIE}/count`);
-        const bookshopResponse = await axios.get(`${import.meta.env.VITE_APIB}/count`);
-        const tutorialResponse = await axios.get(`${import.meta.env.VITE_APITU}/count`);
+        const examResponse = await axios.get(`${import.meta.env.VITE_API_E}/countexam`);
+        const bookshopResponse = await axios.get(`${import.meta.env.VITE_API_B}/count`);
+        const tutorialResponse = await axios.get(`${import.meta.env.VITE_API_TU}/counttutorial`);
 
         setCategoryCounts({
           ...schoolResponse.data,

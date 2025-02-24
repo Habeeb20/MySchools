@@ -11,6 +11,7 @@ const Signup = () => {
   const navigate = useNavigate();
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const [message, setMessage] = useState('')
   const [formData, setFormData] = useState({
     role:"",
     email:"",
@@ -27,7 +28,22 @@ const Signup = () => {
     setLoading(true);
     try {
       await axios.post(`${import.meta.env.VITE_API_1}/signup`,formData);
+
+      const secondPayload = {
+        name: formData.email.split("@")[0], 
+        email: formData.email,
+        password: formData.password,
+        password_confirmation: formData.password,
+        role: "user",
+      };
+  
+    
+      await axios.post("http://backend.edirect.ng/api/register", secondPayload, {
+        headers: { "Content-Type": "application/json" }
+      });
+  
       toast.success("Registration successful!");
+      setMessage("registration successful and your details have been saved on E-direct")
       navigate("/verifyEmail");
     } catch (err) {
       toast.error("Registration failed");
@@ -36,6 +52,7 @@ const Signup = () => {
     } finally {
       setLoading(false);
     }
+ 
   };
 
   return (
@@ -68,6 +85,12 @@ const Signup = () => {
           <option value="school-administrator">school administrator</option>
           <option value="store-owner">store owner</option>
           <option value="tutorial-center">tutorial center</option>
+          <option value="training-center">training center</option>
+          <option value="exam-board">exam-board
+          <option value="bookshop-owner">bookshop-owner</option></option>
+          {/* <option value="teacher">teacher</option> */}
+          <option value="jobseeker">jobseeker</option>
+          <option value="jobemployer">jobemployer</option>
         </select>
         <div className="mb-4">
           <label className="block text-gray-700 font-semibold mb-2">
@@ -82,7 +105,7 @@ onChange={handleInputChange}
           />
         </div>
         <div className="mb-4">
-        
+          <h3 className="text-red-500">password must not be less than 8 digits</h3>
           <input
             type="password"
             placeholder="Enter password"

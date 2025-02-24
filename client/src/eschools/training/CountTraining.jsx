@@ -5,7 +5,7 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { FaCity, FaMapMarkerAlt, FaBuilding, FaLandmark } from "react-icons/fa";
 
-const CountStores = () => {
+const CountTraining = () => {
   const navigate = useNavigate();
   const [visibleCount, setVisibleCount] = useState(4);
   const [stateCounts, setStateCounts] = useState({
@@ -107,7 +107,7 @@ const CountStores = () => {
     const fetchLocationCounts = async () => {
       try {
         const response = await axios.get(
-          `${import.meta.env.VITE_API_S}/location/counts`
+          `${import.meta.env.VITE_API_TR}/location/counts`
         );
     
         setStateCounts(response.data);
@@ -123,7 +123,7 @@ const CountStores = () => {
   return (
     <div className="heroSection p-5">
     <h2 className="heading text-center mb-5 text-1xl font-bold">
-      Number of Stores in Different Locations
+      Number of Training centers in Different Locations
     </h2>
     <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:grid-cols-4">
         {states.slice(0, visibleCount).map((state, index) => (
@@ -135,9 +135,9 @@ const CountStores = () => {
               <div className="text-green-600 text-3xl mb-2">
                   <i className="fas fa-school"></i> 
                 </div>
-            <p className="text-center text-gray-800 font-semibold">stores in {state.name}</p>
+            <p className="text-center text-gray-800 font-semibold">Training in {state.name}</p>
             <h3   className="text-2xl font-bold">{stateCounts[state.name]}</h3>
-            <h3 className="text-lg font-semibold">{`stores in ${state.name}: ${stateCounts[state.name]}`}</h3>
+            <h3 className="text-lg font-semibold">{`Training in ${state.name}: ${stateCounts[state.name]}`}</h3>
 
             
           </div>
@@ -165,4 +165,4 @@ const CountStores = () => {
   );
 };
 
-export default CountStores;
+export default CountTraining;
