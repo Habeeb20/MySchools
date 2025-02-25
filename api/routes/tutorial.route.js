@@ -62,7 +62,7 @@ tutorialrouter.get("/gettutorialdata", verifyToken, async(req, res) => {
         const store = await Tutorial.findOne({ userId: req.user.id });
         if (!store) {
             console.log("tutorial not found for user:", req.user.id);
-            return res.status(404).json({ message: "Store not found" });
+            return res.status(404).json({ message: "tutorial center not found, please register" });
         }
         return res.status(200).json( store );
     } catch (error) {
@@ -73,7 +73,7 @@ tutorialrouter.get("/gettutorialdata", verifyToken, async(req, res) => {
 
 
 //get all tutorial
-tutorialrouter.get("/getalltutorial", async(req, res) => {
+tutorialrouter.get("/getalltutorials", async(req, res) => {
     try {
         const store = await Tutorial.find({})
         return res.status(200).json(store)
@@ -274,8 +274,8 @@ tutorialrouter.get("/get-clicks", async (req, res) => {
     }
   });
 
-  //get a store slug
-tutorialrouter.get("/aStore/:slug", async (req, res) => {
+  //get a tutorial slug
+tutorialrouter.get("/atutorial/:slug", async (req, res) => {
   
     try {
       const { slug } = req.params.slug;
@@ -328,7 +328,7 @@ tutorialrouter.post("/:slug/comments", async (req, res) => {
 });
 
 
-//count stores
+//count tutorial
 tutorialrouter.get("/counttutorial", async (req, res) => {
     try {
         let { locations } = req.query;

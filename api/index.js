@@ -30,6 +30,7 @@ import tutorialrouter from "./routes/tutorial.route.js";
 import jobRouters from "./routes/ejobs/job.route.js";
 import applicantRouter from "./routes/ejobs/applicant.js";
 import messageRouter from "./routes/ejobs/messageroute.js";
+import bookshoprouter from "./routes/bookshopRoute.js";
 dotenv.config();
 
 
@@ -75,6 +76,7 @@ app.use("/eschools/store", storerouter)
 app.use("/eschools/exam", examrouter)
 app.use("/eschools/training", trainingrouter)
 app.use("/eschools/tutorial", tutorialrouter)
+app.use("/eschools/book", bookshoprouter)
 
 
 app.use("/eschools/Ejob", jobRouters)

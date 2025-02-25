@@ -86,8 +86,8 @@ const Signup = () => {
           <option value="store-owner">store owner</option>
           <option value="tutorial-center">tutorial center</option>
           <option value="training-center">training center</option>
-          <option value="exam-board">exam-board
-          <option value="bookshop-owner">bookshop-owner</option></option>
+          <option value="exam-board">exam-board</option>
+          <option value="bookshop-owner">bookshop-owner</option>
           {/* <option value="teacher">teacher</option> */}
           <option value="jobseeker">jobseeker</option>
           <option value="jobemployer">jobemployer</option>

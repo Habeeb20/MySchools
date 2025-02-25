@@ -123,7 +123,7 @@ const CountExams = () => {
   return (
     <div className="heroSection p-5">
     <h2 className="heading text-center mb-5 text-1xl font-bold">
-      Number of Stores in Different Locations
+      Number of Exam bodies in Different Locations
     </h2>
     <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:grid-cols-4">
         {states.slice(0, visibleCount).map((state, index) => (

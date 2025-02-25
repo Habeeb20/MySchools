@@ -3,6 +3,7 @@ import { FaBars, FaTimes } from "react-icons/fa";
 import axios from "axios";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
+import SlidingText3 from "./SlidingText3";
 const StoreDashboard = () => {
   const [isOpen, setIsOpen] = useState(false);
   const navigate = useNavigate()
@@ -624,6 +625,7 @@ useEffect(() => {
               className="w-24 h-24 rounded-full border-4 border-black"
             />
             <div>
+            <SlidingText3 />
               <h1 className="text-2xl font-bold text-black">{userData.email}</h1>
               <p className="text-black">Store Name:  {getMyStore.storeName}</p>
             </div>

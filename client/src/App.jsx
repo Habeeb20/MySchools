@@ -57,6 +57,13 @@ import CategoryPage from './component/landingPage/CategoryPage'
 import CategoryDisplay from './component/landingPage/CategoryDisplay'
 import LocationPage from './component/landingPage/LocationPage copy'
 import DataInState from './component/landingPage/DataInState'
+import TutorialDashboard from './eschools/tutorial/TutorialDashboard'
+import TutorialHomePage from './eschools/tutorial/TutorialHomepage'
+import TutorialDetails from './eschools/tutorial/TutorialDetails'
+import BookshopDashboard from './eschools/BookShop/BookshopDashboard'
+import BookshopDetails from './eschools/BookShop/BookshopDetails'
+import BookshopHomepage from './eschools/BookShop/BookshopHomepage'
+import EGroupPage from './component/EGroup/EGroup'
 const AppLayout = ({ children }) => {
   const location = useLocation();
 
@@ -148,11 +155,26 @@ function App() {
          <Route path="/training/:slug"  element={<TrainingDetails />} />
 
 
+            
+         <Route path="/tutorialdashboard" element={<TutorialDashboard/>} />
+         <Route path="/tutorialhomepage" element={<TutorialHomePage />} />
+         <Route path="/tutorial/:slug"  element={<TutorialDetails />} />
+
+                
+         <Route path="/bookshopdashboard" element={<BookshopDashboard/>} />
+         <Route path="/bookshophomepage" element={<BookshopHomepage />} />
+         <Route path="/book/:slug"  element={<BookshopDetails />} />
+
+
          <Route path="/employerdashboard" element={<EmployerDashboard />} /> 
          <Route path="/jobseekerdashboard" element={<JobSeekerDashboard />} />
          <Route path="/alljobs" element={<JobList />} />
          <Route path="/admission" element={<Admission />} />
          <Route path="/comparison" element={<Comparison />} />
+
+
+         ///EGroup
+         <Route path="/Group/:slug" element={<EGroupPage />} />
 
       </Routes>
 

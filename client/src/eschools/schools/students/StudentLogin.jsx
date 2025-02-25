@@ -57,12 +57,13 @@ const StudentLogin = () => {
         className="bg-white p-8 rounded-xl shadow-md w-full max-w-sm"
         onSubmit={handleSubmit}
       >
+            <h4 className="text-green-500 font-semibold">You can only login if your school admin has created an account for you</h4>
         <div className="flex justify-center mb-0">
           <img src={im} alt="logo" className="rounded-full w-20" />
         </div>
 
         <h2 className="text-3xl font-bold mb-6 text-center text-gray-800">
-          Login
+          Login as a Student
         </h2>
 
         {error && (

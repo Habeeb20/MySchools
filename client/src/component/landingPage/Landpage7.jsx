@@ -1,6 +1,7 @@
 import React from 'react';
 import im2 from '../../assets/website/Rectangle 458.png';
 import im from '../../assets/website/image 370.png';
+import GroupsYouMayLike from '../EGroup/GroupsYouMayLike';
 
 const Landpage7 = () => {
   return (
@@ -49,22 +50,7 @@ const Landpage7 = () => {
         </div>
       </div>
 
-      {/* Blog Section */}
-      <div className="mt-8 bg-white rounded-lg shadow-md p-5">
-        <div className="flex flex-col items-center">
-          <img src={im2} alt="Blog" className="w-full rounded-lg mb-5" />
-          <div className="text-center">
-            <h2 className="text-2xl font-bold text-gray-800 mb-3">
-              Opinion: Why we need to professionalize the health supply chain workforce
-            </h2>
-            <p className="text-sm text-gray-500 mb-3">JAN 24, 2023 | NEWS</p>
-            <p className="text-gray-700">
-              The supply chain management skill gap is one of the reasons why the health system
-              of Africa experiences lapses or issues for its medicines...
-            </p>
-          </div>
-        </div>
-      </div>
+   <GroupsYouMayLike />
 
       {/* Footer Advert Section */}
       <div className="text-center py-12 bg-gray-100 rounded-lg shadow-md mt-8 text-3xl font-semibold">
