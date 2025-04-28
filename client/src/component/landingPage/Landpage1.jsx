@@ -6,7 +6,7 @@ const Landpage1 = () => {
       id: 1,
       title: 'Sign up',
       description: 'Signup up to your school on Eschools',
-      link: '/login',
+      link: '/signup',
     },
     {
       id: 2,

@@ -1,186 +1,182 @@
-import React, { useState } from "react";
-import {
-  FaFacebook,
-  FaInstagram,
-  FaLinkedin,
-  FaLocationArrow,
-  FaMobileAlt,
-} from "react-icons/fa";
-import footerLogo from "../assets/website/logo.png"
-
-
-const FooterLinks = [
-  {
-    title: "Corporate info",
-    link: "/#",
-  },
-  {
-    title: "Accessibility",
-    link: "/#about",
-  },
-  {
-    title: "Jobs",
-    link: "/#contact",
-  },
-  {
-    title: "Ad Choices",
-    link: "/#blog",
-  },
-  {
-    title: "Privacy Policy",
-    link: "/#",
-  },
-  {
-    title: "CA Notice",
-    link: "/#",
-  },
-  {
-    title: "Terms of Service-NEW",
-    link: "/#",
-  },
-];
-
-
-const FooterLink3 = [
-  {
-    title: "NBC App",
-    link: "/#",
-  },
-  {
-    title: "Peacock",
-    link: "/#",
-  },
-  {
-    title: "Advertise",
-    link: "/#",
-  },
-  {
-    title: "Closed Captioning",
-    link: "/#",
-  },
-]
-
-const FooterLink2 = [
-  {
-    title: "Advertise",
-    link: "/#",
-  },
-  {
-    title: "Link TV Provider",
-    link: "/#",
-  },
-  {
-    title: "FAQ",
-    link: "/#",
-  },
-  {
-    title: "Casting",
-    link: "/#blog",
-  },
-  {
-    title: "Contact Us",
-    link: "/#",
-  },
-  {
-    title: "Local Schedule",
-    link: "/#",
-  },
-  {
-    title: "Tickets and NBC Studio",
-    link: "/#",
-  },
-];
-
+import React from "react";
+import { FaTwitter, FaFacebookF, FaInstagram, FaWhatsapp } from "react-icons/fa";
 
 const Footer = () => {
   return (
-    // <div className="bg-gray-100 ">
-    //   <section className="container">
-    //     <div className=" grid md:grid-cols-3 py-5">
-  
-    //       <div className=" py-8 px-4 ">
-    //         <h1 className="sm:text-3xl text-xl font-bold sm:text-left text-justify mb-3 flex items-center gap-3">
-    //           <img src={footerLogo} alt="Logo" className="max-w-[50px]" />
-    //           ESchools
-    //         </h1>
-    //         <p className="">
-    //           Book tickets & track your coach anytime, anywhere.{" "}
-    //         </p>
-    //         <br />
-    //         <div className="flex items-center gap-3">
-         
-    //         </div>
-    //         <div className="flex items-center gap-3 mt-3">
-    
-    //         </div>
-    //         {/* Social Handle */}
-    //         <div className="flex items-center gap-3 mt-6">
-    //           <a href="#">
-    //             <FaInstagram className="text-3xl" />
-    //           </a>
-    //           <a href="#">
-    //             <FaFacebook className="text-3xl" />
-    //           </a>
-    //           <a href="#">
-    //             <FaLinkedin className="text-3xl" />
-    //           </a>
-    //         </div>
-    //       </div>
-    //       {/* Links */}
-    //       <div className="grid grid-cols-2 sm:grid-cols-3 col-span-2 md:pl-10 ">
-    //         <div className="">
-    //           <div className="py-8 px-4 ">
-    //             <h1 className="sm:text-xl text-xl font-bold sm:text-left text-justify mb-3">
-    //               Quick Links
-    //             </h1>
-    //             <ul className={`flex flex-col gap-3`}>
-    //               {FooterLinks.map((link) => (
-    //                 <li className="cursor-pointer hover:translate-x-1 duration-300 hover:text-primary space-x-1 text-gray-500">
-    //                   <span>&#11162;</span>
-    //                   <span>{link.title}</span>
-    //                 </li>
-    //               ))}
-    //             </ul>
-    //           </div>
-    //         </div>
-    //         <div className="">
-    //           <div className="py-8 px-4 ">
-    //             <h1 className="sm:text-xl text-xl font-bold sm:text-left text-justify mb-3">
-    //               {/* Links */}
-    //             </h1>
-    //             <ul className="flex flex-col gap-3">
-    //               {FooterLink3.map((link) => (
-    //                 <li className="cursor-pointer hover:translate-x-1 duration-300 hover:text-primary space-x-1 text-gray-500">
-    //                   <span>&#11162;</span>
-    //                   <span>{link.title}</span>
-    //                 </li>
-    //               ))}
-    //             </ul>
-    //           </div>
-    //         </div>
-    //         <div className="">
-    //           <div className="py-8 px-4 ">
- 
-    //             <ul className="flex flex-col gap-3">
-    //               {FooterLink2.map((link) => (
-    //                 <li className="cursor-pointer hover:translate-x-1 duration-300 hover:text-primary space-x-1 text-gray-500">
-    //                   <span>&#11162;</span>
-    //                   <span>{link.title}</span>
-    //                 </li>
-    //               ))}
-    //             </ul>
-    //           </div>
-    //         </div>
-    //       </div>
-    //     </div>
-    //     <div>
-    //       <div className="text-center py-10 border-t-2 border-gray-300/50">
-    //         @copyright 2024 All rights reserved 
-    //       </div>
-    //     </div>
-    //   </section>
-    // </div>
-    <></>
+    <footer className="bg-gradient-to-r from-green-500 to-green-600 text-white py-10 px-6">
+      <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-5 gap-8">
+        {/* Logo and Social Media Icons */}
+        <div className="flex flex-col items-start">
+          <h2 className="text-2xl font-bold mb-4">Logo</h2>
+          <div className="flex space-x-4">
+            <a href="#" className="hover:text-gray-300">
+              <FaTwitter size={20} />
+            </a>
+            <a href="#" className="hover:text-gray-300">
+              <FaWhatsapp size={20} />
+            </a>
+            <a href="#" className="hover:text-gray-300">
+              <FaFacebookF size={20} />
+            </a>
+            <a href="#" className="hover:text-gray-300">
+              <FaInstagram size={20} />
+            </a>
+          </div>
+        </div>
+
+        {/* Column 1: Corporate Info */}
+        <div>
+          <ul className="space-y-2 text-sm">
+            <li>
+              <a href="#" className="hover:underline">
+                Corporate Info
+              </a>
+            </li>
+            <li>
+              <a href="#" className="hover:underline">
+                Accessibility
+              </a>
+            </li>
+            <li>
+              <a href="#" className="hover:underline">
+                Jobs
+              </a>
+            </li>
+            <li>
+              <a href="#" className="hover:underline">
+                Ad Choices
+              </a>
+            </li>
+            <li>
+              <a href="#" className="hover:underline">
+                Privacy Policy
+              </a>
+            </li>
+            <li>
+              <a href="#" className="hover:underline">
+                CA Notice
+              </a>
+            </li>
+            <li>
+              <a href="#" className="hover:underline">
+                Terms of Service <span className="text-yellow-300">• NEW</span>
+              </a>
+            </li>
+          </ul>
+        </div>
+
+        {/* Column 2: NBC App */}
+        <div>
+          <ul className="space-y-2 text-sm">
+            <li>
+              <a href="#" className="hover:underline">
+                NBC App
+              </a>
+            </li>
+            <li>
+              <a href="#" className="hover:underline">
+                Peacock
+              </a>
+            </li>
+            <li>
+              <a href="#" className="hover:underline">
+                Advertise
+              </a>
+            </li>
+            <li>
+              <a href="#" className="hover:underline">
+                Closed Captioning
+              </a>
+            </li>
+          </ul>
+        </div>
+
+        {/* Column 3: PON Quick Links */}
+        <div>
+          <ul className="space-y-2 text-sm">
+            <li>
+              <a href="#" className="hover:underline">
+                Advertise
+              </a>
+            </li>
+            <li>
+              <a href="#" className="hover:underline">
+                Link TV Provider
+              </a>
+            </li>
+            <li>
+              <a href="#" className="hover:underline">
+                FAQ
+              </a>
+            </li>
+            <li>
+              <a href="#" className="hover:underline">
+                Casting
+              </a>
+            </li>
+            <li>
+              <a href="#" className="hover:underline">
+                Contact Us
+              </a>
+            </li>
+            <li>
+              <a href="#" className="hover:underline">
+                Local Schedule
+              </a>
+            </li>
+            <li>
+              <a href="#" className="hover:underline">
+                Tickets and NBC Studio Tour
+              </a>
+            </li>
+          </ul>
+        </div>
+
+        {/* Column 4: Newsletter Subscription */}
+        <div className="flex flex-col items-start">
+          <h3 className="text-sm font-semibold mb-4">SUBSCRIBE TO OUR NEWSLETTER</h3>
+          <div className="flex w-full max-w-xs">
+            <input
+              type="email"
+              placeholder="Enter your email"
+              className="flex-1 p-2 text-gray-800 rounded-l-md focus:outline-none focus:ring-2 focus:ring-green-300"
+            />
+            <button className="bg-white text-green-600 px-4 py-2 rounded-r-md hover:bg-gray-200">
+              Send
+            </button>
+          </div>
+        </div>
+      </div>
+
+      {/* Right Column: Parental Guidelines */}
+      <div className="max-w-7xl mx-auto mt-8 grid grid-cols-1 md:grid-cols-5 gap-8">
+        <div className="md:col-span-4"></div>
+        <div>
+          <ul className="space-y-2 text-sm">
+            <li>
+              <a href="#" className="hover:underline">
+                Parental Guidelines and TV Ratings
+              </a>
+            </li>
+            <li>
+              <a href="#" className="hover:underline">
+                Video Viewing Policy
+              </a>
+            </li>
+            <li>
+              <a href="#" className="hover:underline">
+                Viewer Panel
+              </a>
+            </li>
+            <li>
+              <a href="#" className="hover:underline">
+                Shop
+              </a>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </footer>
   );
 };
 

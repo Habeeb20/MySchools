@@ -64,6 +64,7 @@ import BookshopDashboard from './eschools/BookShop/BookshopDashboard'
 import BookshopDetails from './eschools/BookShop/BookshopDetails'
 import BookshopHomepage from './eschools/BookShop/BookshopHomepage'
 import EGroupPage from './component/EGroup/EGroup'
+import Footer from './component/Footer'
 const AppLayout = ({ children }) => {
   const location = useLocation();
 
@@ -185,7 +186,7 @@ function App() {
       
   
     
- 
+ <Footer />
     </Router>
     {/* </PaymentProvider> */}
     
